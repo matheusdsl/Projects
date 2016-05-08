@@ -5,7 +5,6 @@
     background-size: 100%;
     font-family: 'Century Gothic', 'Aria', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     min-width: 800px;
-    
 }
 
 .work-area {
@@ -577,3 +576,13 @@ td.ui-datepicker-today, td.ui-datepicker-today a {
         height: 19px;
         border-bottom: 1px solid #aaa;
     }
+
+.texteditor {
+    height: 100%;
+    position: absolute;
+    width: 100%;
+}
+
+.cke_bottom {
+    display: none !important;
+}

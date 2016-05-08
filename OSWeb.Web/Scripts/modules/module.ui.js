@@ -156,6 +156,10 @@
             el.resizable({
                 containment: Util.SimpleValidation(config.containment, ".work-area"),
                 helper: Util.SimpleValidation(config.handle, "ui-resizable-helper"),
+                stop: function (event, ui) {
+                    if (config && config.stopCallback)
+                        config.stopCallback(event, ui);
+                }
             });
         };
 

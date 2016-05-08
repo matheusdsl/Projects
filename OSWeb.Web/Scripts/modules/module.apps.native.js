@@ -71,8 +71,8 @@ var NativeApps = (function () {
             Minimize: true,
             Resizable: true,
             Draggable: true,
-            Height: "400px",
-            Width: "600px",
+            Height: "600px",
+            Width: "1100px",
             XLocation: null,
             YLocation: null
         }
@@ -316,22 +316,32 @@ var NativeApps = (function () {
 
         $("body").append("<div id='scriptAppend" + divId + "'><script src=\"/Scripts/modules/module.apps.native/ckeditor/ckeditor.js\"></script></div>");
 
-        var body = "<textarea id='" + divId + "'></textarea>";
+        var body = "<div id='" + divId + "'><textarea id='textarea" + divId + "' class='texteditor'></textarea></div>";
 
         Util.Find(nativeApps, "obj.Name == 'TextEditor'", function (config) {
             app = Util.Clone(config);
             if (app.AppId == null)
                 app.AppId = Util.GetDataId("nativeApp");
             app.Body = app.Render(body);
-            Ui.CreateWindow(app, function () {
-                instance = CKEDITOR.replace(divId, {
+            Ui.CreateWindow(app, function (w) {
+                instance = CKEDITOR.replace("textarea" + divId, {
                     on: {
 
                         'instanceReady': function (evt) {
-                            evt.editor.resize("100%", editorElem.clientHeight);
+
+                            instance.config.allowedContent = true;
+                            instance.resize("100%", w._element.find(".body").height());
+
+                            var config = {
+                                stopCallback: function (event, ui) {
+                                    instance.resize("100%", w._element.find(".body").height());
+                                }
+                            };
+                            Ui.MakeResizable(w._element, config);                           
                         }
                     }
                 });
+
             });
             return app;
         });

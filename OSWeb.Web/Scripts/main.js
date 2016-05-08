@@ -2,7 +2,7 @@
 
     $(".startmenu").click(function () {
 
-        teste();
+        //teste();
 
         NativeApps.TextEditor();
 
