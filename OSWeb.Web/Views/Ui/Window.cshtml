@@ -1,0 +1,39 @@
+﻿@model OSWeb.Web.Models.Components.WindowModel
+<div class='window draggable' id='@Html.Raw("window"+Model.Id)' data-window='@Html.Raw(Model.Id)'
+     style='
+     width:@Html.Raw(Model.Parameters.Width);
+     min-width:@Html.Raw(Model.Parameters.MinWidth);
+     max-width:@Html.Raw(Model.Parameters.MaxWidth);
+     height:@Html.Raw(Model.Parameters.Height);
+     min-height:@Html.Raw(Model.Parameters.MinHeight);
+     max-height:@Html.Raw(Model.Parameters.MaxHeight);
+     top: @Html.Raw(Model.Parameters.YLocation);
+     left: @Html.Raw(Model.Parameters.XLocation);
+     '>
+    <div class='top-bar'>
+        <div class="left drag">
+            <span class="icon">
+                @Html.Raw(@Model.Parameters.Ico)
+            </span>
+            @Html.Raw(@Model.Parameters.Title)
+        </div>
+        <div class="right">
+
+            @if (Model.Parameters.Close.HasValue && Model.Parameters.Close.Value)
+            {
+                <div class='btn btn-close'><i class="fa fa-close"></i></div>
+            }
+            @if (Model.Parameters.Resize.HasValue && Model.Parameters.Resize.Value)
+            {
+                <div class='btn btn-resize'><i class="fa fa-square-o"></i></div>
+            }
+            @if (Model.Parameters.Minimize.HasValue && Model.Parameters.Minimize.Value)
+            {
+                <div class='btn btn-minimize'><i class="fa fa-minus"></i></div>
+            }
+        </div>
+    </div>
+    <div class='body'>
+        @Html.Raw(Model.Parameters.Body)
+    </div>
+</div>

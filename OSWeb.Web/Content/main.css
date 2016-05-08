@@ -1,0 +1,579 @@
+﻿html, body {
+    margin: 0px;
+    padding: 0;
+    background: #aaa /*url(/Content/images/mars.jpg) no-repeat*/;
+    background-size: 100%;
+    font-family: 'Century Gothic', 'Aria', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    min-width: 800px;
+    
+}
+
+.work-area {
+    position: fixed;
+    top: 0;
+    bottom: 30px;
+    left: 0;
+    right: 0;
+}
+
+.window {
+    background: #eee;
+    box-shadow: 0px 0px 5px 0px #777;
+    position: fixed;
+    border-bottom: 2px solid #888;
+    margin: 5px;
+    display: none;
+}
+
+    .window.evidence {
+        box-shadow: 0px 0px 15px #58a1c2 !important;
+    }
+
+    .window .top-bar {
+        background: #eee;
+        height: 20px;
+        border-bottom: 1px solid #ddd;
+        float: none;
+    }
+
+        .window .top-bar .left {
+            color: #333;
+            font-size: 14px;
+            padding: 2px;
+            float: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            line-height: 18px;
+            cursor: default;
+            width: calc(100% - 130px);
+        }
+
+            .window .top-bar .left .icon {
+                margin-right: 5px;
+            }
+
+        .window .top-bar .right {
+            color: #333;
+            font-size: 14px;
+            float: right;
+            width: 123px;
+        }
+
+            .window .top-bar .right .btn {
+                width: 40px;
+                height: 20px;
+                text-align: center;
+                margin-left: 1px;
+                float: right;
+                cursor: default;
+                font-size: 15px;
+                color: #777;
+            }
+
+                .window .top-bar .right .btn i {
+                    font-weight: bold;
+                    margin-top: 2px;
+                }
+
+                .window .top-bar .right .btn:hover {
+                    background: #ddd;
+                }
+
+            .window .top-bar .right .btn-close:hover {
+                background: #d83d3d;
+                color: #fff;
+            }
+
+    .window.maximized {
+        width: 100% !important;
+        height: unset !important;
+        bottom: 0px !important;
+        left: 0px !important;
+        top: 0px !important;
+        position: absolute !important;
+        margin: 0px;
+    }
+
+    .window.minimized {
+        top: 100%;
+        opacity: 0.1;
+    }
+
+    .window .body {
+        float: left;
+        min-height: 50px;
+        overflow-X: auto;
+        width: 100%;
+        height: calc(100% - 25px);
+        background: #fff;
+    }
+
+        .window .body iframe.container {
+            width: 100%;
+            height: calc(100% - 5px);
+            border: 0px;
+        }
+
+.taskbar {
+    background: #444;
+    height: 20px;
+    float: left;
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    height: 30px;
+    box-shadow: 0px 0px 5px #000;
+}
+
+    .taskbar .startmenu {
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+        width: 60px;
+        background: #777;
+        height: 100%;
+        font-size: 17px;
+        color: #eee;
+        cursor: default;
+    }
+
+        .taskbar .startmenu .ico {
+            text-align: center;
+            padding-top: 5px;
+            padding-bottom: 6px;
+        }
+
+    .taskbar .task-area {
+        position: fixed;
+        left: 62px;
+        bottom: 0px;
+        height: 31px;
+        width: calc(100% - 364px);
+    }
+
+        .taskbar .task-area .task-item {
+            position: relative;
+            height: 28px;
+            width: 50px;
+            background: transparent;
+            margin-left: 2px;
+            border-bottom: 3px solid #999;
+            float: left;
+        }
+
+            .taskbar .task-area .task-item:hover {
+                border-bottom: 3px solid #bbb;
+                background: rgba(0,0,0,0.4);
+            }
+
+            .taskbar .task-area .task-item .ico {
+                margin-top: 5px;
+                float: left;
+                height: 25px;
+                width: 100%;
+                text-align: center;
+                color: #fff;
+                font-size: 18px;
+            }
+
+                .taskbar .task-area .task-item .ico img {
+                    max-height: 25px;
+                }
+
+                .taskbar .task-area .task-item .ico .counter {
+                    font-size: 9px;
+                    color: #fff;
+                    position: absolute;
+                    bottom: 0px;
+                    right: 0px;
+                    padding: 1px;
+                    cursor: default;
+                }
+
+            .taskbar .task-area .task-item .apps {
+                position: fixed;
+                padding: 0px;
+                bottom: 31px;
+                z-index: 9999;
+                display: block;
+                background: rgba(0,0,0,0.4);
+                box-shadow: 0px 0px 5px #000;
+                overflow: auto;
+                white-space: nowrap;
+                max-width: 90%;
+            }
+
+                .taskbar .task-area .task-item .apps .box-wrapper {
+                    width: 200px;
+                    height: 160px;
+                    display: inline-block;
+                    margin: 5px;
+                    background: rgba(255,255,255,0.1);
+                }
+
+                    .taskbar .task-area .task-item .apps .box-wrapper .box {
+                        width: 200px;
+                        height: 160px;
+                    }
+
+                        .taskbar .task-area .task-item .apps .box-wrapper .box .box-container {
+                            float: left;
+                            height: 130px;
+                            width: 200px;
+                            background: rgba(255,255,255,0.1);
+                            text-align: center;
+                        }
+
+                            .taskbar .task-area .task-item .apps .box-wrapper .box .box-container canvas,
+                            .taskbar .task-area .task-item .apps .box-wrapper .box .box-container img {
+                                max-width: 100%;
+                                max-height: 100%;
+                            }
+
+                        .taskbar .task-area .task-item .apps .box-wrapper .box:hover .top-bar {
+                            background: #444;
+                        }
+
+                        .taskbar .task-area .task-item .apps .box-wrapper .box .top-bar {
+                            background: #888;
+                            height: 30px;
+                            border-bottom: 1px solid #ddd;
+                            float: none;
+                        }
+
+                            .taskbar .task-area .task-item .apps .box-wrapper .box .top-bar .title {
+                                color: #eee;
+                                font-size: 12px;
+                                float: left;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                margin: 1px;
+                                white-space: nowrap;
+                                line-height: 22px;
+                                cursor: default;
+                                width: calc(100% - 32px);
+                                height: 30px;
+                            }
+
+                            .taskbar .task-area .task-item .apps .box-wrapper .box .top-bar .btn-close {
+                                color: #eee;
+                                font-size: 24px;
+                                float: right;
+                                width: 30px;
+                                height: 30px;
+                                text-align: center;
+                            }
+
+                                .taskbar .task-area .task-item .apps .box-wrapper .box .top-bar .btn-close:hover {
+                                    background: #d83d3d;
+                                }
+
+    .taskbar .util-area {
+        position: absolute;
+        bottom: 0px;
+        right: 0px;
+        width: 300px;
+        color: #eee;
+        height: 100%;
+    }
+
+        .taskbar .util-area .notification-area {
+            width: 200px;
+            float: left;
+            position: relative;
+            height: 100%;
+        }
+
+        .taskbar .util-area .clock-area {
+            width: 92px;
+            float: left;
+            position: relative;
+            height: 100%;
+            text-align: right;
+            font-size: 20px;
+            cursor: default;
+        }
+
+            .taskbar .util-area .clock-area:hover {
+                background: rgba(0,0,0,0.2);
+            }
+
+            .taskbar .util-area .clock-area .clock {
+                text-align: center;
+                font-weight: bold;
+                color: #fff;
+            }
+
+        .taskbar .util-area .calendar-area {
+            width: 300px;
+            position: fixed;
+            bottom: 32px;
+            right: 1px;
+            /*height: 470px;*/
+            background: rgba(0,0,0,0.4);
+            box-shadow: 0px 0px 5px #000;
+            text-align: center;
+            cursor: default;
+            display: none;
+        }
+
+            .taskbar .util-area .calendar-area .calendar-clock {
+                font-size: 52px;
+                margin: 10px;
+                padding: 10px;
+                padding-right: 40px;
+                background: rgba(0,0,0,0.4);
+                text-align: right;
+            }
+
+                .taskbar .util-area .calendar-area .calendar-clock .calendar-date {
+                    font-size: 20px;
+                }
+
+.btn-minimize-all {
+    width: 5px;
+    border-left: 1px solid #ddd;
+    height: 100%;
+    background: #656565;
+    float: right;
+    position: relative;
+    cursor: default;
+}
+
+    .btn-minimize-all:hover {
+        background: rgba(255,255,255,0.4);
+    }
+
+.calendar-area .ui-datepicker-header {
+    width: 100%;
+    height: 40px;
+    background: rgba(0,0,0,0.4);
+}
+
+    .calendar-area .ui-datepicker-header select {
+        border: 0px;
+        font-size: 20px;
+        background: rgba(0,0,0,0.4);
+        color: #fff;
+        height: 30px;
+    }
+
+.ui-datepicker-prev, .ui-datepicker-next {
+    margin: 3px;
+    width: 30px;
+    height: 30px;
+    font-size: 22px;
+}
+
+    .ui-datepicker-prev:hover, .ui-datepicker-next:hover {
+        background: rgba(0,0,0,0.4);
+        color: #eee;
+    }
+
+.ui-datepicker-prev {
+    float: right;
+}
+
+.ui-datepicker-next {
+    float: left;
+}
+
+.ui-datepicker-calendar {
+    width: 100%;
+    background: rgba(0,0,0,0.4);
+}
+
+    .ui-datepicker-calendar th {
+        background: rgba(255,255,255,0.8);
+        color: #000;
+    }
+
+    .ui-datepicker-calendar td {
+        height: 50px;
+        font-size: 22px;
+        background: rgba(0,0,0,0.1);
+    }
+
+        .ui-datepicker-calendar td a {
+            text-decoration: none;
+            color: #fff;
+        }
+
+td.ui-datepicker-week-end {
+    background: rgba(0,0,0,0.2);
+}
+
+td.ui-datepicker-other-month {
+    color: #666;
+    background: rgba(255,255,255,0.1);
+}
+
+td.ui-datepicker-week-col {
+    font-size: 16px;
+    color: #fff;
+    background: rgba(255,255,255,0.4);
+}
+
+td.ui-datepicker-current-day, td.ui-datepicker-current-day a {
+    background: #bbb;
+    color: #222;
+}
+
+td.ui-datepicker-today, td.ui-datepicker-today a {
+    background: #58a1c2;
+    color: #fff;
+}
+
+.ui-icon-gripsmall-diagonal-se {
+    background-position: -64px -224px;
+}
+
+.ui-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.ui-resizable-handle {
+    position: absolute;
+    font-size: 0.1px;
+    display: block;
+    -ms-touch-action: none;
+    touch-action: none;
+}
+
+.ui-resizable-se {
+    cursor: se-resize;
+    width: 12px;
+    height: 12px;
+    right: 1px;
+    bottom: 1px;
+}
+
+.ui-resizable-e {
+    cursor: e-resize;
+    width: 7px;
+    right: -5px;
+    top: 0;
+    height: 100%;
+}
+
+.ui-resizable-s {
+    cursor: s-resize;
+    height: 7px;
+    width: 100%;
+    bottom: -5px;
+    left: 0;
+}
+
+.ui-resizable-ghost {
+    border: 1px dotted #444;
+}
+
+.ui-resizable-helper {
+    border: 1px dotted #999;
+}
+
+.overlay {
+    position: fixed;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    background: rgba(0,0,0,0.8);
+    z-index: 999998;
+}
+
+    .overlay .loading {
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 25%;
+        width: 80%;
+        text-align: center;
+        color: #fff;
+        font-size: 16px;
+        z-index: 999999;
+    }
+
+#loading {
+    display: block;
+}
+
+.popup-container {
+    font-size: 16px;
+    margin: 10px;
+}
+
+.popup-btn-area {
+    text-align: right;
+    height: 40px;
+    width: 100%;
+    position: absolute;
+    bottom: 0px;
+    background: #888;
+}
+
+    .popup-btn-area button {
+        margin: 7px;
+        font-size: 12px;
+        min-width: 100px;
+        height: 25px;
+        background: #666;
+        color: #eee;
+        border: 0;
+        border-radius: 2px;
+    }
+
+        .popup-btn-area button:hover {
+            background: #58a1c2;
+        }
+
+.monitor .browserMonitor {
+    background: rgba(0,0,0,0.2);
+    width: 50px;
+    height: 28px;
+    right: 0px;
+    position: relative;
+    overflow: hidden;
+    margin: 1px;
+    float: right;
+}
+
+.monitor .leader {
+    height: 100%;
+    width: 0px;
+    display: inline-block;
+}
+
+.monitor .hiding {
+    position: absolute;
+    width: 100%;
+    height: 1%;
+    bottom: 0px;
+}
+
+.monitor .ACM_graphUnit {
+    width: 3px;
+    height: 1%;
+    margin-right: 2px;
+    padding: 0px;
+    display: inline-block;
+    background: #999;
+    border-top: 1px solid #fff;
+}
+
+
+.context-menu {
+    position: fixed;
+    min-width: 150px;
+    min-height: 30px;
+    background: #888;
+}
+
+    .context-menu .item {
+        width: 100%;
+        position: relative;
+        height: 19px;
+        border-bottom: 1px solid #aaa;
+    }

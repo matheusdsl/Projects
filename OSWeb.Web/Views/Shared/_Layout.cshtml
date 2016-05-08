@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+
+    <link href="~/Content/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/main.css" rel="stylesheet" />
+    <link href="~/Content/inc/jquery.contextMenu.min.css" rel="stylesheet" />
+
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    @*<script src="~/Scripts/jquery-1.8.3.min.js"></script>*@
+    <script src="~/Scripts/ui/jquery.ui.core.js"></script>
+    <script src="~/Scripts/ui/jquery.ui.effect.js"></script>
+    <script src="~/Scripts/ui/jquery.ui.widget.js"></script>
+    <script src="~/Scripts/ui/jquery.ui.mouse.js"></script>
+    <script src="~/Scripts/ui/jquery.ui.draggable.js"></script>
+    <script src="~/Scripts/ui/jquery.ui.resizable.js"></script>
+    <script src="~/Scripts/ui/jquery.ui.datepicker.js"></script>
+    <script src="~/Scripts/ui/jquery.ui.position.js"></script>
+    <script src="~/Scripts/jquery-collision.min.js"></script>
+    <script src="~/Scripts/jquery-ui-draggable-collision.min.js"></script>
+    <script src="~/Scripts/html2canvas.js"></script>
+    <script src="~/Scripts/inc/jquery.contextMenu.min.js"></script>
+
+    @*Modules*@
+    <script src="~/Scripts/modules/module.exception.js"></script>
+    <script src="~/Scripts/modules/module.util.js"></script>
+    <script src="~/Scripts/modules/module.ui.js"></script>
+    <script src="~/Scripts/modules/module.apps.native.js"></script>
+    <script src="~/Scripts/modules/module.core.js"></script>
+
+    <script src="~/Scripts/main.js"></script>
+
+</head>
+<body>  
+    <div id='loading' class='overlay'><div class='loading'>Starting ... </div></div>
+    @RenderBody()
+</body>
+</html>
