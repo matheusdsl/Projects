@@ -33,8 +33,8 @@
         Window.MakeDraggable(el, config);
     };
 
-    public.MakeResizable = function (el, config) {
-        Window.MakeResizable(el, config);
+    public.MakeResizable = function (el, config, resizeStopCallback) {
+        Window.MakeResizable(el, config, resizeStopCallback);
     };
 
     public.SetEventsWindow = function (w) {
@@ -99,7 +99,10 @@
                         _element: element
                     };
 
-                    setEventsWindow(Window);
+                    if (!config.calls)
+                        config.calls = {};
+
+                    setEventsWindow(Window, config.calls);
 
                     Taskbar.AddTask(Window, getWindows(), function () {
                         getWindows(Window);
@@ -152,13 +155,13 @@
             });
         };
 
-        protected.MakeResizable = function (el, config) {
+        protected.MakeResizable = function (el, config, resizeStopCallback) {
             el.resizable({
                 containment: Util.SimpleValidation(config.containment, ".work-area"),
                 helper: Util.SimpleValidation(config.handle, "ui-resizable-helper"),
                 stop: function (event, ui) {
-                    if (config && config.stopCallback)
-                        config.stopCallback(event, ui);
+                    if (resizeStopCallback)
+                        resizeStopCallback(event, ui);
                 }
             });
         };
@@ -168,14 +171,16 @@
         };
 
         //private
-        function setEventsWindow(w) {
+        function setEventsWindow(w, calls) {
             var el = w._element;
 
             if (w.Draggable)
                 protected.MakeDraggable(el, {});
 
-            if (w.Resizable)
-                protected.MakeResizable(el, {});
+            if (w.Resizable) {
+                if (!calls.resizeStopCallback) calls.resizeStopCallback = null;
+                protected.MakeResizable(el, {}, calls.resizeStopCallback);
+            }
 
             el.find(".top-bar").mousedown(function () {
                 el.addClass('evidence');
@@ -187,18 +192,21 @@
             });
 
             el.find(".btn-close").click(function () {
-                closeWindow(el);
+                if (!calls.onCloseWindow) calls.onCloseWindow = null;
+                closeWindow(el, calls.onCloseWindow);
             });
 
             el.find(".btn-resize").click(function () {
-                Util.Find(getWindows(), "obj.Id == '" + el.data('window') + "'", function (obj, i) {
+                Util.Find(getWindows(), "obj.Id == '" + el.data('window') + "'", function (obj, i) {                    
                     resizeWindow(el, obj, obj.Exhibition == window_status_exhibition.MAXIMIZED);
+                    if (calls.onResizeWindow) calls.onResizeWindow();
                 });
             });
 
             el.find(".btn-minimize").click(function () {
                 Util.Find(getWindows(), "obj.Id == '" + el.data('window') + "'", function (obj, i) {
                     minimizeWindow(el, obj, obj.Exhibition != window_status_exhibition.MINIMIZED);
+                    if (calls.onMinimizeWindow) calls.onMinimizeWindow();
                 });
             });
         }
@@ -244,7 +252,7 @@
             }
         }
 
-        function closeWindow(el) {
+        function closeWindow(el, onClose) {
             Util.Find(getWindows(), "obj.Id == '" + el.data('window') + "'",
                 function (obj, i) {
                     obj.Status = window_status.NO_REPLY;
@@ -256,6 +264,8 @@
                             removeWindow(null, function () {
                                 el.remove();
                                 Taskbar.RemoveTask(obj);
+                                if (onClose)
+                                    onClose(obj);
                             }
                             , i);
                         }

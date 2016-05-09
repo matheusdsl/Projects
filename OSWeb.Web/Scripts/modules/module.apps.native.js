@@ -311,6 +311,7 @@ var NativeApps = (function () {
     }
 
     public.TextEditor = function () {
+        var w;
         var instance;
         var divId = Util.GetDataId("textEditor");
 
@@ -323,25 +324,33 @@ var NativeApps = (function () {
             if (app.AppId == null)
                 app.AppId = Util.GetDataId("nativeApp");
             app.Body = app.Render(body);
-            Ui.CreateWindow(app, function (w) {
+
+            var calls = {
+                onCloseWindow : function () {
+                    $("#scriptAppend" + divId).remove();
+                },
+                onResizeWindow: function () {
+                    if (instance)
+                        instance.resize("100%", w._element.find(".body").height());
+                },
+                resizeStopCallback: function (event, ui) {
+                    if(instance)
+                        instance.resize("100%", w._element.find(".body").height());
+                }
+            };
+            app.calls = calls;
+
+            Ui.CreateWindow(app, function (_w) {
+                w = _w;
                 instance = CKEDITOR.replace("textarea" + divId, {
                     on: {
 
                         'instanceReady': function (evt) {
-
                             instance.config.allowedContent = true;
-                            instance.resize("100%", w._element.find(".body").height());
-
-                            var config = {
-                                stopCallback: function (event, ui) {
-                                    instance.resize("100%", w._element.find(".body").height());
-                                }
-                            };
-                            Ui.MakeResizable(w._element, config);                           
+                            instance.resize("100%", _w._element.find(".body").height());                    
                         }
                     }
                 });
-
             });
             return app;
         });
