@@ -33,8 +33,8 @@
         Window.MakeDraggable(el, config);
     };
 
-    public.MakeResizable = function (el, config, resizeStopCallback) {
-        Window.MakeResizable(el, config, resizeStopCallback);
+    public.MakeResizable = function (el, config, onResizeStop) {
+        Window.MakeResizable(el, config, onResizeStop);
     };
 
     public.SetEventsWindow = function (w) {
@@ -43,6 +43,10 @@
 
     public.GetWindows = function () {
         return Window.GetWindows();
+    };    
+
+    public.GetNextLocationWindow = function () {
+        Window.GetNextLocationWindow();
     };
 
     //private
@@ -99,10 +103,10 @@
                         _element: element
                     };
 
-                    if (!config.calls)
-                        config.calls = {};
+                    if (!config.Calls)
+                        config.Calls = {};
 
-                    setEventsWindow(Window, config.calls);
+                    setEventsWindow(Window, config.Calls);
 
                     Taskbar.AddTask(Window, getWindows(), function () {
                         getWindows(Window);
@@ -111,9 +115,6 @@
                         if (callback)
                             callback(Window);
                     });
-
-
-
                 },
                 function (x1, x2, x3) {
                     Exception(null, function () {
@@ -155,19 +156,23 @@
             });
         };
 
-        protected.MakeResizable = function (el, config, resizeStopCallback) {
+        protected.MakeResizable = function (el, config, onResizeStop) {
             el.resizable({
                 containment: Util.SimpleValidation(config.containment, ".work-area"),
                 helper: Util.SimpleValidation(config.handle, "ui-resizable-helper"),
                 stop: function (event, ui) {
-                    if (resizeStopCallback)
-                        resizeStopCallback(event, ui);
+                    if (onResizeStop)
+                        onResizeStop(event, ui);
                 }
             });
         };
 
         protected.SetEventsWindow = function (w) {
             setEventsWindow(w);
+        };
+
+        protected.GetNextLocationWindow = function () {
+            getNextLocationWindow();
         };
 
         //private
@@ -178,8 +183,8 @@
                 protected.MakeDraggable(el, {});
 
             if (w.Resizable) {
-                if (!calls.resizeStopCallback) calls.resizeStopCallback = null;
-                protected.MakeResizable(el, {}, calls.resizeStopCallback);
+                if (!calls.onResizeStop) calls.onResizeStop = null;
+                protected.MakeResizable(el, {}, calls.onResizeStop);
             }
 
             el.find(".top-bar").mousedown(function () {
@@ -192,14 +197,14 @@
             });
 
             el.find(".btn-close").click(function () {
-                if (!calls.onCloseWindow) calls.onCloseWindow = null;
-                closeWindow(el, calls.onCloseWindow);
+                if (!calls.onClose) calls.onClose = null;
+                closeWindow(el, calls.onClose);
             });
 
             el.find(".btn-resize").click(function () {
                 Util.Find(getWindows(), "obj.Id == '" + el.data('window') + "'", function (obj, i) {                    
                     resizeWindow(el, obj, obj.Exhibition == window_status_exhibition.MAXIMIZED);
-                    if (calls.onResizeWindow) calls.onResizeWindow();
+                    if (calls.onResize) calls.onResize();
                 });
             });
 
@@ -332,26 +337,30 @@
         function setDefaultConfigWindow(id, c) {
             if (!c) c = {};
             if (!id) id = "undefinedId_PleaseCheckGeneration";
+            
+            var base = Core.BaseConfigApp;
 
-            c.AppId = Util.SimpleValidation(c.AppId, "undefinedAppId")
-            c.Title = Util.SimpleValidation(c.Title, "Unnamed " + Util.GetDataIdAux());
-            c.Ico = Util.SimpleValidation(c.Ico, "<i class='fa fa-cube'></i>");
-            c.Close = Util.SimpleValidation(c.Close, true);
-            c.Resize = Util.SimpleValidation(c.Resize, true);
-            c.Minimize = Util.SimpleValidation(c.Minimize, true);
-            c.Width = Util.SimpleValidation(c.Width, "400px");
-            c.MinWidth = Util.SimpleValidation(c.MinWidth, "150px");
-            c.MaxWidth = Util.SimpleValidation(c.MaxWidth, "100%");
-            c.Height = Util.SimpleValidation(c.Height, "100px");
-            c.MinHeight = Util.SimpleValidation(c.MinHeight, "90px");
-            c.MaxHeight = Util.SimpleValidation(c.MaxHeight, "unset");
-            c.XLocation = Util.SimpleValidation(c.XLocation, getNextLocationWindow());
-            c.YLocation = Util.SimpleValidation(c.YLocation, getNextLocationWindow());
-            c.Body = Util.SimpleValidation(c.Body, "<h2>Empty App</h2>");
+            base.AppId = Util.SimpleValidation(c.AppId, "undefinedAppId")
+            base.Title = Util.SimpleValidation(c.Title, "Unnamed " + Util.GetDataIdAux());
+            base.Ico = Util.SimpleValidation(c.Ico, "<i class='fa fa-cube'></i>");
+            base.Close = Util.SimpleValidation(c.Close, true);
+            base.Resize = Util.SimpleValidation(c.Resize, true);
+            base.Minimize = Util.SimpleValidation(c.Minimize, true);
+            base.Width = Util.SimpleValidation(c.Width, "400px");
+            base.MinWidth = Util.SimpleValidation(c.MinWidth, "150px");
+            base.MaxWidth = Util.SimpleValidation(c.MaxWidth, "100%");
+            base.Height = Util.SimpleValidation(c.Height, "100px");
+            base.MinHeight = Util.SimpleValidation(c.MinHeight, "90px");
+            base.MaxHeight = Util.SimpleValidation(c.MaxHeight, "unset");
+            base.XLocation = Util.SimpleValidation(c.XLocation, getNextLocationWindow());
+            base.YLocation = Util.SimpleValidation(c.YLocation, getNextLocationWindow());
+            base.Body = Util.SimpleValidation(c.Body, "<h2>Empty App</h2>");
+            base.Calls = Util.SimpleValidation(c.Calls, null);
+            base.Render = Util.SimpleValidation(c.Render, null);
 
             var obj = {
                 Id: id,
-                Parameters: c
+                Parameters: base
             };
 
             return obj;
@@ -589,6 +598,25 @@
     var NotificationArea = (function () {
         function protected() { }
 
+
+
+        return protected;
+    }());
+
+    var Icons = (function () {
+        function protected() { }
+
+        protected.Init = function () {
+
+        };
+
+        protected.LoadIcons = function () {
+
+        };
+
+        function loadIcons() {
+
+        }
 
 
         return protected;

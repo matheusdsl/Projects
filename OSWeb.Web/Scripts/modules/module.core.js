@@ -80,6 +80,36 @@
 
     };
 
+    public.BaseConfigApp = {
+        AppId: null,
+        Name: null,
+        Title: null,
+        Ico: null,
+        Body: null,
+        Render: function () {            
+            return null;
+        },
+        Resize: null,
+        Minimize: null,
+        Resizable: null,
+        Draggable: null,
+        Height: null,
+        Width: null,
+        XLocation: null,
+        YLocation: null,
+        Calls: {
+            onClose: function () {
+                return null;
+            },
+            onResize: function () {
+                return null;
+            },
+            onResizeStop: function () {
+                return null;
+            }
+        },
+    };
+
     var Thread = {
         New: function (method, time, callback) {
             if (!method) throw new Exception('Function not specified');
@@ -93,7 +123,6 @@
             if (callback) callback();
         }
     };
-
 
 
     return public;

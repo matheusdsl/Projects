@@ -338,7 +338,7 @@ var NativeApps = (function () {
                         instance.resize("100%", w._element.find(".body").height());
                 }
             };
-            app.calls = calls;
+            app.Calls = calls;
 
             Ui.CreateWindow(app, function (_w) {
                 w = _w;
