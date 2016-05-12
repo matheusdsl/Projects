@@ -114,6 +114,11 @@
             border: 0px;
         }
 
+        .shadow-window {
+            position: fixed;
+            background: rgba(200,200,200,0.7);
+        }
+
 .taskbar {
     background: #444;
     height: 20px;
@@ -202,72 +207,77 @@
                 overflow: auto;
                 white-space: nowrap;
                 max-width: 90%;
+                display: none;
             }
 
-                .taskbar .task-area .task-item .apps .box-wrapper {
+            .taskbar .task-area .task-item:hover .apps {
+                display: block;
+            }
+
+            .taskbar .task-area .task-item .apps .box-wrapper {
+                width: 200px;
+                height: 160px;
+                display: inline-block;
+                margin: 5px;
+                background: rgba(255,255,255,0.1);
+            }
+
+                .taskbar .task-area .task-item .apps .box-wrapper .box {
                     width: 200px;
                     height: 160px;
-                    display: inline-block;
-                    margin: 5px;
-                    background: rgba(255,255,255,0.1);
                 }
 
-                    .taskbar .task-area .task-item .apps .box-wrapper .box {
+                    .taskbar .task-area .task-item .apps .box-wrapper .box .box-container {
+                        float: left;
+                        height: 130px;
                         width: 200px;
-                        height: 160px;
+                        background: rgba(255,255,255,0.1);
+                        text-align: center;
                     }
 
-                        .taskbar .task-area .task-item .apps .box-wrapper .box .box-container {
+                        .taskbar .task-area .task-item .apps .box-wrapper .box .box-container canvas,
+                        .taskbar .task-area .task-item .apps .box-wrapper .box .box-container img {
+                            max-width: 100%;
+                            max-height: 100%;
+                        }
+
+                    .taskbar .task-area .task-item .apps .box-wrapper .box:hover .top-bar {
+                        background: #444;
+                    }
+
+                    .taskbar .task-area .task-item .apps .box-wrapper .box .top-bar {
+                        background: #888;
+                        height: 30px;
+                        border-bottom: 1px solid #ddd;
+                        float: none;
+                    }
+
+                        .taskbar .task-area .task-item .apps .box-wrapper .box .top-bar .title {
+                            color: #eee;
+                            font-size: 12px;
                             float: left;
-                            height: 130px;
-                            width: 200px;
-                            background: rgba(255,255,255,0.1);
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            margin: 1px;
+                            white-space: nowrap;
+                            line-height: 22px;
+                            cursor: default;
+                            width: calc(100% - 32px);
+                            height: 30px;
+                        }
+
+                        .taskbar .task-area .task-item .apps .box-wrapper .box .top-bar .btn-close {
+                            color: #eee;
+                            font-size: 24px;
+                            float: right;
+                            width: 30px;
+                            height: 30px;
                             text-align: center;
                         }
 
-                            .taskbar .task-area .task-item .apps .box-wrapper .box .box-container canvas,
-                            .taskbar .task-area .task-item .apps .box-wrapper .box .box-container img {
-                                max-width: 100%;
-                                max-height: 100%;
+                            .taskbar .task-area .task-item .apps .box-wrapper .box .top-bar .btn-close:hover {
+                                background: #d83d3d;
                             }
-
-                        .taskbar .task-area .task-item .apps .box-wrapper .box:hover .top-bar {
-                            background: #444;
-                        }
-
-                        .taskbar .task-area .task-item .apps .box-wrapper .box .top-bar {
-                            background: #888;
-                            height: 30px;
-                            border-bottom: 1px solid #ddd;
-                            float: none;
-                        }
-
-                            .taskbar .task-area .task-item .apps .box-wrapper .box .top-bar .title {
-                                color: #eee;
-                                font-size: 12px;
-                                float: left;
-                                overflow: hidden;
-                                text-overflow: ellipsis;
-                                margin: 1px;
-                                white-space: nowrap;
-                                line-height: 22px;
-                                cursor: default;
-                                width: calc(100% - 32px);
-                                height: 30px;
-                            }
-
-                            .taskbar .task-area .task-item .apps .box-wrapper .box .top-bar .btn-close {
-                                color: #eee;
-                                font-size: 24px;
-                                float: right;
-                                width: 30px;
-                                height: 30px;
-                                text-align: center;
-                            }
-
-                                .taskbar .task-area .task-item .apps .box-wrapper .box .top-bar .btn-close:hover {
-                                    background: #d83d3d;
-                                }
 
     .taskbar .util-area {
         position: absolute;

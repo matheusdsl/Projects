@@ -43,10 +43,19 @@
 
     public.GetWindows = function () {
         return Window.GetWindows();
-    };    
+    };
 
     public.GetNextLocationWindow = function () {
         Window.GetNextLocationWindow();
+    };
+
+    public.PrintArea = function (elSource, onrendered) {
+        html2canvas(elSource, {
+            onrendered: function (canvas) {
+                if (onrendered)
+                    onrendered(canvas);
+            }
+        });
     };
 
     //private
@@ -112,6 +121,16 @@
                         getWindows(Window);
                         element.fadeIn(200);
                         toEvidence(element, 500);
+
+                        Util.Sleep(function () {
+                            public.PrintArea($("#window" + Window.Id + " .body"), function (canvas) {
+                                if (Window.Exhibition !== window_status_exhibition.MINIMIZED) {
+                                    var myImage = canvas.toDataURL("image/gif");
+                                    $("#taskbox" + Window.Id + " .box-container").html("<img src='" + myImage + "'/>");
+                                }
+                            });
+                        }, 500);
+
                         if (callback)
                             callback(Window);
                     });
@@ -175,7 +194,22 @@
             getNextLocationWindow();
         };
 
-        //private
+        protected.CloseWindow = function (el, onClose) {
+            closeWindow(el, onClose);
+        };
+
+        protected.TriggerClose = function (el) {
+            $(el).find(".btn-close").trigger("click");
+        };
+
+        protected.TriggerMinimize = function (el) {
+            $(el).find(".btn-minimize").trigger("click");
+        };
+
+        protected.TriggerResize = function (el) {
+            $(el).find(".btn-resize").trigger("click");
+        };
+
         function setEventsWindow(w, calls) {
             var el = w._element;
 
@@ -202,7 +236,7 @@
             });
 
             el.find(".btn-resize").click(function () {
-                Util.Find(getWindows(), "obj.Id == '" + el.data('window') + "'", function (obj, i) {                    
+                Util.Find(getWindows(), "obj.Id == '" + el.data('window') + "'", function (obj, i) {
                     resizeWindow(el, obj, obj.Exhibition == window_status_exhibition.MAXIMIZED);
                     if (calls.onResize) calls.onResize();
                 });
@@ -316,8 +350,9 @@
                 $("#taskbox" + obj.Id).css({
                     "zoom": "0.8"
                 });
-                el.addClass("minimized", 300);
+                el.addClass("minimized");
                 el.fadeOut(0);
+                animateMinimizeWindow(el, visible);
             }
             else {
                 if (obj.PreviousExhibition !== null)
@@ -334,10 +369,35 @@
 
         }
 
+        function animateMinimizeWindow(el, visible) {
+            var id = Util.GetDataId("shadowWindow");
+            if (visible) {
+                var html = "<div id='" + id + "' class='shadow-window' style='top:" +
+                    el.css("top") + "; left: " +
+                    el.css("left") + "; width:" +
+                    el.width() + "px; height:" +
+                    el.height() + "px;'></div>";
+                $("body").append(html);
+                var shadow = $("#" + id);
+                shadow.animate({
+                    "top": "100%",
+                    "left": "45%",
+                    "width": "1px",
+                    "height": "1px"
+                }, 500, function () {
+                    shadow.remove();
+                });
+
+            }
+            else {
+
+            }
+        }
+
         function setDefaultConfigWindow(id, c) {
             if (!c) c = {};
             if (!id) id = "undefinedId_PleaseCheckGeneration";
-            
+
             var base = Core.BaseConfigApp;
 
             base.AppId = Util.SimpleValidation(c.AppId, "undefinedAppId")
@@ -405,6 +465,7 @@
 
         protected.Init = function () {
             eventBtnMinimizeAll();
+            //updatePreviewsTaskbox();
         };
 
         protected.AddTask = function (w, windows, callback) {
@@ -491,38 +552,6 @@
 
                 commonEventsTask(w, task);
 
-                var timeoutRemove;
-                var timeoutOpen;
-                var opened = false;
-
-                $("#task" + task.Id + " .apps").hide(0);
-
-                $("#task" + task.Id).click(function () {
-                    if (!opened) {
-                        $("#task" + task.Id + " .apps").fadeIn(100);
-                        opened = true;
-                    }
-                });
-
-                $("#task" + task.Id).hover(function () {
-                    if (!opened)
-                        timeoutOpen = Util.Sleep(function () {
-                            $("#task" + task.Id + " .apps").fadeIn(100);
-                            opened = true;
-                        }, 700);
-                });
-
-                $("#task" + task.Id + " .apps").hover(function () {
-                    clearTimeout(timeoutRemove);
-                });
-
-                $("#task" + task.Id).mouseleave(function () {
-                    timeoutRemove = Util.Sleep(function () {
-                        $("#task" + task.Id + " .apps").fadeOut(100);
-                        opened = false;
-                    }, 2000);
-                });
-
                 if (callback)
                     callback();
             }
@@ -530,36 +559,15 @@
 
         function commonEventsTask(w, task) {
             $("#taskbox" + w.Id + " .btn-close").click(function () {
-                $(w._element).find(".btn-close").trigger("click");
+                Window.TriggerClose(w._element);
             });
 
             $("#taskbox" + w.Id + " .box-container").click(function () {
                 if (w.Exhibition == window_status_exhibition.MINIMIZED) {
-                    $(w._element).find(".btn-minimize").trigger("click");
+                    Window.TriggerMinimize(w._element);
                 }
                 else {
                     Window.ToFront(w._element);
-                    $("#task" + task.Id + " .apps").fadeOut(0);
-                }
-            });
-
-            $("#taskbox" + w.Id + " .box-container").mouseenter(function () {
-                html2canvas($("#window" + w.Id + " .body"), {
-                    onrendered: function (canvas) {
-                        if (w.Exhibition !== window_status_exhibition.MINIMIZED) {
-                            var myImage = canvas.toDataURL("image/gif");
-                            $("#taskbox" + w.Id + " .box-container").html("<img src='" + myImage + "'/>");
-                        }
-                    }
-                });
-            });
-
-            html2canvas($("#window" + w.Id + " .body"), {
-                onrendered: function (canvas) {
-                    if (w.Exhibition !== window_status_exhibition.MINIMIZED) {
-                        var myImage = canvas.toDataURL("image/gif");
-                        $("#taskbox" + w.Id + " .box-container").html("<img src='" + myImage + "'/>");
-                    }
                 }
             });
         }
@@ -582,6 +590,19 @@
                     }
                 });
             });
+        }
+
+        function updatePreviewsTaskbox() {
+            Core.Threads.Add(function () {
+
+                Util.Each(Window.GetWindows(), "obj.Exhibition !== 'MINIMIZED'", function (w) {
+                    public.PrintArea($("#window" + w.Id + " .body"), function (canvas) {
+                        var myImage = canvas.toDataURL("image/jpg");
+                        $("#taskbox" + w.Id + " .box-container").html("<img src='" + myImage + "'/>");
+                    });
+                });
+
+            }, 5000, "Refresh Print Previews Taskbox");
         }
 
         return protected;

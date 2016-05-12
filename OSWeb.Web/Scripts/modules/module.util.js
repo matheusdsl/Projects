@@ -79,6 +79,17 @@
         }
     }
 
+    public.Each = function (array, condition, callback) {
+
+        for (var i = 0; i < length; i++) {
+            var obj = array[i];
+            if (condition && eval(condition)) {
+                if (callback)
+                    callback(obj, i);
+            }
+        }
+    }
+
     public.RemoveFromArray = function (array, i) {
         array.splice(i, 1);
     };
