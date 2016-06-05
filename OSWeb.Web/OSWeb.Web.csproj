@@ -603,7 +603,8 @@
     <Content Include="Scripts\modules\module.apps.native\ckeditor\skins\moono-dark\images\refresh.png" />
     <Content Include="Scripts\modules\module.apps.native\ckeditor\styles.js" />
     <Content Include="Scripts\modules\module.exception.js" />
-    <Content Include="Scripts\modules\module.ui.js" />
+    <Content Include="Scripts\modules\module.ui.components.js" />
+    <Content Include="Scripts\modules\module.ui.core.js" />
     <Content Include="Scripts\modules\module.core.js" />
     <Content Include="Scripts\modules\module.util.js" />
     <Content Include="Scripts\respond.js" />

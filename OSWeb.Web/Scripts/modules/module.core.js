@@ -7,6 +7,11 @@
         Get: function () {
             return threads;
         },
+        Find: function (name, callback) {
+            Util.Find(Core.Threads.Get(), "obj.name === '" + name + "'", function (thread) {
+                callback(thread);
+            });
+        },
         Add: function (method, time, name) {
             var obj;
             if (method && time) {
@@ -27,6 +32,11 @@
             }, function () {
                 Exception("Thread not found.");
             });
+        },
+        RemoveByName: function (name) {
+            public.Threads.Find(name, function (thread) {
+                Core.Threads.Remove(thread);
+            });
         }
     };
 
@@ -38,11 +48,11 @@
                     Ui.RemoveLoading();
                 });
             });
-        }, 500);      
+        }, 500);
     };
 
     public.Popup = {
-        Alert: function(message, callbackOk) {
+        Alert: function (message, callbackOk) {
             var selectorOk = Util.GetDataId("btnOk");
             NativeApps.PopupAlert(message, selectorOk, function (window) {
                 $("#" + selectorOk).click(function () {
@@ -64,7 +74,7 @@
         },
         Error: function (message) {
             NativeApps.PopupError(message);
-        },        
+        },
         Offline: function (title, message) {
             NativeApps.PopupOffline(title, message, function (obj) {
                 $(".work-area").append(obj.html);
@@ -86,7 +96,7 @@
         Title: null,
         Ico: null,
         Body: null,
-        Render: function () {            
+        Render: function () {
             return null;
         },
         Resize: null,

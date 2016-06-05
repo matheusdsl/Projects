@@ -75,6 +75,76 @@ var NativeApps = (function () {
             Width: "1100px",
             XLocation: null,
             YLocation: null
+        },
+        {
+            AppId: null,
+            Name: "ThreadViewer",
+            Title: "Thread Viewer",
+            Ico: "<i class='fa fa-file-text-o' style='color: #999;'></i>",
+            Body: "",
+            Render: function (id) {
+                if (id) {
+                    var threads;
+                    function refresh() {
+                        threads = Core.Threads.Get();
+                        var el = $("#" + id);
+                        if (el) {
+                            var temp = "";                            
+                            temp += Component.Table.Header(["Id", "Instance", "Name", "Interval"]);
+                            for (var i = 0; i < threads.length; i++) {
+                                var t = threads[i];
+                                temp += Component.Table.Row([t.id, t.instance, t.name, t.time + " ms"]);
+                            }
+                            el.html(temp);
+                        }                      
+                    }
+                    Core.Threads.Add(refresh, 3000, id);
+                    refresh();
+                }
+            },
+            Resize: true,
+            Minimize: true,
+            Resizable: true,
+            Draggable: true,
+            Height: "400px",
+            Width: "600px",
+            XLocation: null,
+            YLocation: null
+        },
+        {
+            AppId: null,
+            Name: "TaskManager",
+            Title: "Task Manager",
+            Ico: "<i class='fa fa-file-text-o' style='color: #999;'></i>",
+            Body: "",
+            Render: function (id) {
+                if (id) {
+                    var objs;
+                    function refresh() {
+                        objs = Ui.GetWindows();
+                        var el = $("#" + id);
+                        if (el) {
+                            var temp = "";
+                            temp += Component.Table.Header(["Id", "Title", "Exhibition", "Status", "App Id"]);
+                            for (var i = 0; i < objs.length; i++) {
+                                var w = objs[i];
+                                temp += Component.Table.Row([w.Id, w._window.Parameters.Title, w.Exhibition, w.Status, w.AppId]);
+                            }
+                            el.html(temp);
+                        }
+                    }
+                    Core.Threads.Add(refresh, 3000, id);
+                    refresh();
+                }
+            },
+            Resize: true,
+            Minimize: true,
+            Resizable: true,
+            Draggable: true,
+            Height: "400px",
+            Width: "600px",
+            XLocation: null,
+            YLocation: null
         }
     ];
 
@@ -87,6 +157,11 @@ var NativeApps = (function () {
             public.Clock($(".clock-area"));
             public.Calendar($(".calendar-area"));
             public.BrowserMonitor($(".notification-area"));
+            $(".browserMonitor").click(function () {
+                public.ThreadViewer();
+                public.TaskManager();
+            });
+
             if (callback) callback();
         });
     };
@@ -208,6 +283,48 @@ var NativeApps = (function () {
         clicker();
     };
 
+    public.ThreadViewer = function () {
+        var app;
+        Util.Find(nativeApps, "obj.Name == 'ThreadViewer'", function (threadviewer) {
+            app = Util.Clone(threadviewer);
+            if (app.AppId == null)
+                app.AppId = Util.GetDataId("nativeApp");
+
+            var id = Util.GetDataId("ThreadViewer");
+            app.Body = "<table id='" + id + "' border='0' class='simpleTable'></table>";
+            app.Calls = {
+                onClose: function () {
+                    Core.Threads.RemoveByName(id);
+                }
+            };
+            Ui.CreateWindow(app, function () {
+                app.Render(id);
+            });
+            return app;
+        });
+    };
+
+    public.TaskManager = function () {
+        var app;
+        Util.Find(nativeApps, "obj.Name == 'TaskManager'", function (threadviewer) {
+            app = Util.Clone(threadviewer);
+            if (app.AppId == null)
+                app.AppId = Util.GetDataId("nativeApp");
+
+            var id = Util.GetDataId("TaskManager");
+            app.Body = "<table id='" + id + "' border='0' class='simpleTable'></table>";
+            app.Calls = {
+                onClose: function () {
+                    Core.Threads.RemoveByName(id);
+                }
+            };
+            Ui.CreateWindow(app, function () {
+                app.Render(id);
+            });
+            return app;
+        });
+    };
+
     public.PopupAlert = function (message, selectorOk, callback) {
         var app;
         var body = "<div class='popup-container'>" + message + "</div>";
@@ -326,7 +443,7 @@ var NativeApps = (function () {
             app.Body = app.Render(body);
 
             var calls = {
-                onCloseWindow : function () {
+                onCloseWindow: function () {
                     $("#scriptAppend" + divId).remove();
                 },
                 onResizeWindow: function () {
@@ -334,7 +451,7 @@ var NativeApps = (function () {
                         instance.resize("100%", w._element.find(".body").height());
                 },
                 resizeStopCallback: function (event, ui) {
-                    if(instance)
+                    if (instance)
                         instance.resize("100%", w._element.find(".body").height());
                 }
             };
@@ -347,7 +464,7 @@ var NativeApps = (function () {
 
                         'instanceReady': function (evt) {
                             instance.config.allowedContent = true;
-                            instance.resize("100%", _w._element.find(".body").height());                    
+                            instance.resize("100%", _w._element.find(".body").height());
                         }
                     }
                 });

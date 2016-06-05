@@ -99,7 +99,7 @@
 
                     var element = $("#window" + id)
 
-                    var Window = {
+                    var $Window = {
                         Id: id,
                         Status: window_status.OPENED,
                         PreviousExhibition: null,
@@ -115,24 +115,24 @@
                     if (!config.Calls)
                         config.Calls = {};
 
-                    setEventsWindow(Window, config.Calls);
+                    setEventsWindow($Window, config.Calls);
 
-                    Taskbar.AddTask(Window, getWindows(), function () {
-                        getWindows(Window);
+                    Taskbar.AddTask($Window, getWindows(), function () {
+                        getWindows($Window);
                         element.fadeIn(200);
                         toEvidence(element, 500);
 
                         Util.Sleep(function () {
-                            public.PrintArea($("#window" + Window.Id + " .body"), function (canvas) {
-                                if (Window.Exhibition !== window_status_exhibition.MINIMIZED) {
+                            public.PrintArea($("#window" + $Window.Id + " .body"), function (canvas) {
+                                if ($Window.Exhibition !== window_status_exhibition.MINIMIZED) {
                                     var myImage = canvas.toDataURL("image/gif");
-                                    $("#taskbox" + Window.Id + " .box-container").html("<img src='" + myImage + "'/>");
+                                    $("#taskbox" + $Window.Id + " .box-container").html("<img src='" + myImage + "'/>");
                                 }
                             });
                         }, 500);
 
                         if (callback)
-                            callback(Window);
+                            callback($Window);
                     });
                 },
                 function (x1, x2, x3) {
@@ -372,11 +372,7 @@
         function animateMinimizeWindow(el, visible) {
             var id = Util.GetDataId("shadowWindow");
             if (visible) {
-                var html = "<div id='" + id + "' class='shadow-window' style='top:" +
-                    el.css("top") + "; left: " +
-                    el.css("left") + "; width:" +
-                    el.width() + "px; height:" +
-                    el.height() + "px;'></div>";
+                var html = Component.Window.Minimizing(id, el.css("top"), el.css("left"), el.width(), el.height());
                 $("body").append(html);
                 var shadow = $("#" + id);
                 shadow.animate({
@@ -398,7 +394,7 @@
             if (!c) c = {};
             if (!id) id = "undefinedId_PleaseCheckGeneration";
 
-            var base = Core.BaseConfigApp;
+            var base = Util.Clone(Core.BaseConfigApp);
 
             base.AppId = Util.SimpleValidation(c.AppId, "undefinedAppId")
             base.Title = Util.SimpleValidation(c.Title, "Unnamed " + Util.GetDataIdAux());
@@ -512,11 +508,7 @@
         function addTaskItem(w, callback) {
             setDefaultConfigTask(w, function (task) {
 
-                var html = '<div class="task-item" id="task' + task.Id + '" data-task="' + task.Id + '">'
-                + '<div class="ico">' + task.Ico + '<div class="counter">99</div></div>'
-                + '<div class="apps">'
-                + '</div>'
-                + '</div>';
+                var html = Component.Task.Item(task.Id, task.Ico);
 
                 $(".task-area").append(html);
 
@@ -525,12 +517,7 @@
         }
 
         function addWindowToTask(w, callback, task) {
-            var html = '<div class="box-wrapper">' +
-                '<div title="' + w._window.Parameters.Title + '" class="box" id="taskbox' + w.Id + '">' +
-                '<div class="top-bar"><div class="title">' + w._window.Parameters.Title + '</div><div class="btn-close"><i class="fa fa-close"></i></div></div>' +
-                '<div class="box-container"></div>' +
-                '</div>' +
-                '</div>';
+            var html = Component.Task.Box(w.Id, w._window.Parameters.Title);
 
             if (!task) {
                 getTask(w.AppId, function (_w) {
@@ -638,7 +625,6 @@
         function loadIcons() {
 
         }
-
 
         return protected;
     }());

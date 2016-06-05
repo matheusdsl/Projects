@@ -145,7 +145,7 @@
     public.Thread = function (method, time, name, instance) {
         var thread = {
             id: Util.GetDataId("thread"),
-            neme: name ? name : "Unnamed",
+            name: name ? name : "Unnamed",
             method: method,
             instance: instance,
             time: time
