@@ -107,6 +107,7 @@
         Width: null,
         XLocation: null,
         YLocation: null,
+        Background: null,
         Calls: {
             onClose: function () {
                 return null;
@@ -124,7 +125,16 @@
         New: function (method, time, callback) {
             if (!method) throw new Exception('Function not specified');
             if (!time) time = 1000;
-            var t = setInterval(method, time);
+            var i = 0;
+            var t = {
+                number: setInterval(function () {
+                    method();
+                    i++;
+                }, time),
+                qtdHistory: function () {
+                    return i;
+                }
+            };
             if (callback) callback(t);
             return t;
         },

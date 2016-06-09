@@ -5,8 +5,8 @@
 
     public.GetDataId = function (prefix) {
         auxDataId++;
-        if (!prefix) prefix = "";
-        var uk = prefix + "000" + auxDataId + "M4tH3u5" + Math.random().toString(36).substr(2, 5);
+        if (!prefix) prefix = "U";
+        var uk = prefix + "X" + auxDataId + "0" + Math.random().toString(36).substr(2, 5);
         return uk;
     };
 

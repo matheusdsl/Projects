@@ -59,7 +59,7 @@
     };
 
     //private
-    var window_status = { OPENED: "OPENED", NO_REPLY: "NO REPLY" };
+    var window_status = { RUNNING: "RUNNING", NO_REPLY: "NO REPLY" };
     var window_status_exhibition = { CUSTOM: "CUSTOM", MINIMIZED: "MINIMIZED", MAXIMIZED: "MAXIMIZED" };
 
     function startWorkArea(callback) {
@@ -101,7 +101,7 @@
 
                     var $Window = {
                         Id: id,
-                        Status: window_status.OPENED,
+                        Status: window_status.RUNNING,
                         PreviousExhibition: null,
                         Exhibition: window_status_exhibition.CUSTOM,
                         Draggable: Util.SimpleValidation(config.Draggable, true),
@@ -221,9 +221,12 @@
                 protected.MakeResizable(el, {}, calls.onResizeStop);
             }
 
+            el.click(function () {
+                toFront(el, null, true);
+            });
+
             el.find(".top-bar").mousedown(function () {
                 el.addClass('evidence');
-                toFront(el, null, true);
             });
 
             el.find(".top-bar").mouseup(function () {
@@ -248,6 +251,8 @@
                     if (calls.onMinimizeWindow) calls.onMinimizeWindow();
                 });
             });
+
+            el.find(".body").css({ "background": w._window.Parameters.Background });
         }
 
         function getWindows(_new) {
@@ -413,6 +418,7 @@
             base.Body = Util.SimpleValidation(c.Body, "<h2>Empty App</h2>");
             base.Calls = Util.SimpleValidation(c.Calls, null);
             base.Render = Util.SimpleValidation(c.Render, null);
+            base.Background = Util.SimpleValidation(c.Background, "#fff");
 
             var obj = {
                 Id: id,

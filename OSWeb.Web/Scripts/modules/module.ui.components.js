@@ -13,6 +13,60 @@
                    width + "px; height:" +
                    height + "px;'></div>";
             return html;
+        },
+        Aba: function (id, array) {
+            var html = "<div id='aba" + id + "' class='aba'>" +
+                       "<div class='aba_collection'>";
+
+            for (var i = 0; i < array.length; i++) {
+                html += "<div class='aba_item item" + i + "'>" +
+                              array[i].title +
+                        "</div>";
+            }
+
+            html += "</div>";
+
+            for (var i = 0; i < array.length; i++) {
+                html += "<div class='aba_container item" + i + "'>" +
+                            array[i].body +
+                        "</div>";
+            }
+
+            html += "</div>";
+
+            html += "<script type='text/javascript'>";
+
+            for (var i = 0; i < array.length; i++) {
+                if (i === 0) {
+                    html += '$("#aba' + id + ' .aba_container.item' + i + '").show();' +
+                    '$("#aba' + id + ' .aba_item.item' + i + '").addClass("selected");';
+                }
+                if ((i + 1) < array.length) {
+                    html += '$("#aba' + id + ' .aba_container.item' + (i + 1) + '").hide();' +
+                    '$("#aba' + id + ' .aba_item.item' + (i + 1) + '").removeClass("selected");';
+                }                
+            }
+
+            for (var i = 0; i < array.length; i++) {
+                html += '$("#aba' + id + ' .aba_item.item' + i + '").click(function () {' +
+
+                    '$("#aba' + id + ' .aba_container.item' + i + '").show();' +
+                    '$("#aba' + id + ' .aba_item.item' + i + '").addClass("selected"); ';
+
+                if ((i + 1) < array.length) {
+                    html += '$("#aba' + id + ' .aba_container.item' + (i + 1) + '").hide();' +
+                    '$("#aba' + id + ' .aba_item.item' + (i + 1) + '").removeClass("selected"); ';
+                }
+                if ((i - 1) >= 0) {
+                    html += '$("#aba' + id + ' .aba_container.item' + (i - 1) + '").hide();' +
+                    '$("#aba' + id + ' .aba_item.item' + (i - 1) + '").removeClass("selected");';
+                }
+                html += '});';
+            }
+
+            html += "</script>";
+
+            return html;
         }
     };
 

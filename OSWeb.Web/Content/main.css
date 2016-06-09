@@ -114,10 +114,10 @@
             border: 0px;
         }
 
-        .shadow-window {
-            position: fixed;
-            background: rgba(200,200,200,0.7);
-        }
+.shadow-window {
+    position: fixed;
+    background: rgba(200,200,200,0.7);
+}
 
 .taskbar {
     background: #444;
@@ -623,22 +623,57 @@ td.ui-datepicker-today, td.ui-datepicker-today a {
     }
 
 table.simpleTable {
-    background: #ddd;
+    background: #eee;
     width: 100%;
     color: #444;
     font-size: 14px;
 }
-table.simpleTable tr:hover {
-    background: #777;
-    color: #ddd;
+
+    table.simpleTable tr:hover {
+        background: #58a1c2;
+        color: #fff;
+    }
+
+    table.simpleTable th {
+        text-align: center;
+        background: #666;
+        color: #ccc;
+    }
+
+    table.simpleTable tr td {
+        padding: 5px;
+    }
+
+.aba_collection {
+    float: left;
+    width: 100%;
+    border-bottom: 10px solid #eee;
+    background: rgba(0,0,0,0.2);
 }
 
-table.simpleTable th {
-    text-align: center;
-    background: #ccc;
-    color: #888;
-}
+    .aba_collection .aba_item {
+        float: left;
+        margin-left: 5px;
+        margin-top: 2px;
+        border-top: 1px solid #777;
+        border-right: 1px solid #777;
+        border-left: 1px solid #777;
+        padding: 5px;
+        background: #999;
+        color: #666;
+        cursor: default;
+        box-shadow: 0px -1px 0px 0px #fff;
+    }
+    .aba_collection .aba_item:hover {
+        color: #fff;
+        background: #58a1c2;
+    }
+        .aba_collection .aba_item.selected {
+            background: #eee;
+            box-shadow: 0px -1px 0px 0px #58a1c2;
+        }
 
-table.simpleTable tr td {
-    padding: 5px;
+.aba_container {
+    float: left;
+    width: 100%;
 }

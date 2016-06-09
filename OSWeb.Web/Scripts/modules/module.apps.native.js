@@ -78,60 +78,37 @@ var NativeApps = (function () {
         },
         {
             AppId: null,
-            Name: "ThreadViewer",
-            Title: "Thread Viewer",
-            Ico: "<i class='fa fa-file-text-o' style='color: #999;'></i>",
-            Body: "",
-            Render: function (id) {
-                if (id) {
-                    var threads;
-                    function refresh() {
-                        threads = Core.Threads.Get();
-                        var el = $("#" + id);
-                        if (el) {
-                            var temp = "";                            
-                            temp += Component.Table.Header(["Id", "Instance", "Name", "Interval"]);
-                            for (var i = 0; i < threads.length; i++) {
-                                var t = threads[i];
-                                temp += Component.Table.Row([t.id, t.instance, t.name, t.time + " ms"]);
-                            }
-                            el.html(temp);
-                        }                      
-                    }
-                    Core.Threads.Add(refresh, 3000, id);
-                    refresh();
-                }
-            },
-            Resize: true,
-            Minimize: true,
-            Resizable: true,
-            Draggable: true,
-            Height: "400px",
-            Width: "600px",
-            XLocation: null,
-            YLocation: null
-        },
-        {
-            AppId: null,
             Name: "TaskManager",
             Title: "Task Manager",
             Ico: "<i class='fa fa-file-text-o' style='color: #999;'></i>",
             Body: "",
             Render: function (id) {
                 if (id) {
-                    var objs;
+                    var tasks;
+                    var threads;
                     function refresh() {
-                        objs = Ui.GetWindows();
-                        var el = $("#" + id);
-                        if (el) {
-                            var temp = "";
-                            temp += Component.Table.Header(["Id", "Title", "Exhibition", "Status", "App Id"]);
-                            for (var i = 0; i < objs.length; i++) {
-                                var w = objs[i];
-                                temp += Component.Table.Row([w.Id, w._window.Parameters.Title, w.Exhibition, w.Status, w.AppId]);
-                            }
-                            el.html(temp);
+                        tasks = Ui.GetWindows();
+                        threads = Core.Threads.Get();
+                        var el = $("#aba" + id);
+                        var el_tasks = el.find("#tasks" + id);
+                        var el_threads = el.find("#threads" + id);
+
+                        var temp = "";
+                        temp += Component.Table.Header(["Id", "Title", "Exhibition", "Status", "App Id"]);
+                        for (var i = 0; i < tasks.length; i++) {
+                            var w = tasks[i];
+                            temp += Component.Table.Row([w.Id, w._window.Parameters.Title, w.Exhibition, w.Status, w.AppId]);
                         }
+                        el_tasks.html(temp);
+
+                        temp = "";
+                        temp += Component.Table.Header(["Id", "Instance", "Name", "Interval", "Qtd.Refresh"]);
+                        for (var i = 0; i < threads.length; i++) {
+                            var t = threads[i];
+                            temp += Component.Table.Row([t.id, t.instance.number, t.name, t.time + " ms", t.instance.qtdHistory()]);
+                        }
+                        el_threads.html(temp);
+
                     }
                     Core.Threads.Add(refresh, 3000, id);
                     refresh();
@@ -144,7 +121,8 @@ var NativeApps = (function () {
             Height: "400px",
             Width: "600px",
             XLocation: null,
-            YLocation: null
+            YLocation: null,
+            Background: "#eee",
         }
     ];
 
@@ -158,7 +136,7 @@ var NativeApps = (function () {
             public.Calendar($(".calendar-area"));
             public.BrowserMonitor($(".notification-area"));
             $(".browserMonitor").click(function () {
-                public.ThreadViewer();
+                //public.ThreadViewer();
                 public.TaskManager();
             });
 
@@ -232,7 +210,7 @@ var NativeApps = (function () {
         var progress;
         var timer;
         function libs() {
-            progress = "undefined" == typeof progress ? function () { var e = {}, t = 0, n = [], o = function (e) { for (var t = 0, n = 0, o = +bottomline, r = 0; r < e.length; r++) { var a = +e[r]; a < bottomline ? t += o : a > topline && (t += a), n += a } var l = n / 100, c = t ? t / l : 0; return { p: c > 100 ? 100 : c, r: t } }; return e.build = function (e) { var t = "string" == typeof e ? document.getElementById(e) : e; t.className = "browserMonitor"; var o = t.appendChild(document.createElement("span")); o.className = "leader"; var r = t.appendChild(document.createElement("div")); r.className = "hiding"; var a = document.createDocumentFragment(), l = document.createElement("span"); l.style; l.className = "ACM_graphUnit"; for (var c = 0; 18 > c; c++) n.unshift(a.appendChild(l.cloneNode(!0))); t.appendChild(a) }, e.do_next = function (e) { var t = n.pop(), o = t.parentNode; n.unshift(t), o.removeChild(t), t.style.height = (e >= 100 ? 100 : ++e) + "%", o.appendChild(t) }, e.do_test = function () { var e = n.length; setTimeout(function t() { var n = ~~(100 * Math.random()); this.do_next(n), --e && setTimeout(t, 800) }, 800) }, e.push = function (e, n) { var r = o(e), a = r.r + t; if (a > n) { for (var l = ~~(a / n), c = 0; l > c; c++) this.do_next(100), a -= n; t = a } else this.do_next(r.p), t = 0 }, e.collect = function () { timer.collect(), collector.start(e) }, e.stop = function () { timer.stop(), collector.stop() }, e }() : progress, collector = "undefined" == typeof collector ? function () { var e, t = 800, n = {}; return n.start = function (n) { if (e) return void debug("Collector already started"); var o = t; e = setInterval(function () { var e = window.stack; e.length && (window.stack = [], n.push(e, o)) }, t) }, n.stop = function () { e && (clearInterval(e), e = null) }, n }() : collector;
+            progress = "undefined" == typeof progress ? function () { var e = {}, t = 0, n = [], o = function (e) { for (var t = 0, n = 0, o = +bottomline, r = 0; r < e.length; r++) { var a = +e[r]; a < bottomline ? t += o : a > topline && (t += a), n += a } var l = n / 100, c = t ? t / l : 0; return { p: c > 100 ? 100 : c, r: t } }; return e.build = function (e) { var t = "string" == typeof e ? document.getElementById(e) : e; t.className = "browserMonitor"; var o = t.appendChild(document.createElement("span")); o.className = "leader"; var r = t.appendChild(document.createElement("div")); r.className = "hiding"; var a = document.createDocumentFragment(), l = document.createElement("span"); l.style; l.className = "ACM_graphUnit"; for (var c = 0; 18 > c; c++) n.unshift(a.appendChild(l.cloneNode(!0))); t.appendChild(a) }, e.do_next = function (e) { var t = n.pop(), o = t.parentNode; n.unshift(t), o.removeChild(t), t.style.height = (e >= 100 ? 100 : ++e) + "%", o.appendChild(t) }, e.do_test = function () { var e = n.length; setTimeout(function t() { var n = ~~(100 * Math.random()); this.do_next(n), --e && setTimeout(t, 800) }, 800) }, e.push = function (e, n) { var r = o(e), a = r.r + t; if (a > n) { for (var l = ~~(a / n), c = 0; l > c; c++) this.do_next(100), a -= n; t = a } else this.do_next(r.p), t = 0 }, e.collect = function () { timer.collect(), collector.start(e) }, e.stop = function () { timer.stop(), collector.stop() }, e }() : progress, collector = "undefined" == typeof collector ? function () { var e, t = 800, n = {}; return n.start = function (n) { if (e) return void debug("Collector already started"); var o = t; Core.Threads.Add(function () { var e = window.stack; e.length && (window.stack = [], n.push(e, o)) }, t, "BrowserMonitor"); }, n.stop = function () { Core.Threads.RemoveByName("BrowserMonitor"); }, n }() : collector;
             window.topline = null; window.bottomline = null; window.stack = [];
             timer = "undefined" == typeof timer ? function () { var t = {}, n = null, e = !1; return t.busy = function () { return e }, t.stop = function () { n && (clearTimeout(n), n = !1), e = !1 }, t.callibrate = function (n) { t.collect(1, function () { for (var t = stack, e = {}, a = 0; a < t.length; a++) { var r = t[a]; e[r] ? e[r]++ : e[r] = 1 } var l, o, i = t.length / 100, c = [], u = []; for (var a in e) { var r = e[a], s = r / i; u.push([s, a]) } u.sort(function (t, n) { var e = t[0], a = n[0]; return e > a ? -1 : a > e ? 1 : 0 }); var f = u[0], v = u[1]; c = u.length ? [f[1], 1 == u.length ? f[1] : v[1]] : [], c.sort(), o = c[0], l = c[1], null != l && null != o ? (topline = l, bottomline = o, n && n()) : alert("scream") }) }, t.collect = function (a, r) { if (!e) { e = !0; var l = 0; if (a) { var o = 800 * a, i = ~~(o / (topline ? topline : 1)); stack = new Array(i); var c = 0; !function () { var e = arguments.callee, a = +new Date; n = setTimeout(function () { var n = +new Date, i = n - a; if (l += i, stack[c++] = i, o > l) e(); else { for (t.stop() ; stack.length && null == stack[stack.length - 1];) stack.pop(); r && r() } }, 0) }() } else stack = [], function u() { var t = +new Date; e && (n = setTimeout(function (n) { var e = +new Date, a = e - t; stack.push(a), u() }, 0)) }(); return stack } }, t }() : timer;
         }
@@ -281,48 +259,6 @@ var NativeApps = (function () {
             }
         }
         clicker();
-    };
-
-    public.ThreadViewer = function () {
-        var app;
-        Util.Find(nativeApps, "obj.Name == 'ThreadViewer'", function (threadviewer) {
-            app = Util.Clone(threadviewer);
-            if (app.AppId == null)
-                app.AppId = Util.GetDataId("nativeApp");
-
-            var id = Util.GetDataId("ThreadViewer");
-            app.Body = "<table id='" + id + "' border='0' class='simpleTable'></table>";
-            app.Calls = {
-                onClose: function () {
-                    Core.Threads.RemoveByName(id);
-                }
-            };
-            Ui.CreateWindow(app, function () {
-                app.Render(id);
-            });
-            return app;
-        });
-    };
-
-    public.TaskManager = function () {
-        var app;
-        Util.Find(nativeApps, "obj.Name == 'TaskManager'", function (threadviewer) {
-            app = Util.Clone(threadviewer);
-            if (app.AppId == null)
-                app.AppId = Util.GetDataId("nativeApp");
-
-            var id = Util.GetDataId("TaskManager");
-            app.Body = "<table id='" + id + "' border='0' class='simpleTable'></table>";
-            app.Calls = {
-                onClose: function () {
-                    Core.Threads.RemoveByName(id);
-                }
-            };
-            Ui.CreateWindow(app, function () {
-                app.Render(id);
-            });
-            return app;
-        });
     };
 
     public.PopupAlert = function (message, selectorOk, callback) {
@@ -472,10 +408,40 @@ var NativeApps = (function () {
             return app;
         });
     };
+  
+    public.TaskManager = function () {
+        var app;
+        Util.Find(nativeApps, "obj.Name == 'TaskManager'", function (threadviewer) {
+            app = Util.Clone(threadviewer);
+            if (app.AppId == null)
+                app.AppId = Util.GetDataId("nativeApp");
+
+            var id = Util.GetDataId("TaskManager");
+            var id_tasks = "tasks" + id;
+            var id_threads = "threads" + id;
+
+            var html = Component.Window.Aba(id,
+                [
+                    { title: "Tasks", body: "<table id='" + id_tasks + "' border='0' class='simpleTable'></table>" },
+                    { title: "Threads", body: "<table id='" + id_threads + "' border='0' class='simpleTable'></table>" },
+                ]);
+
+            app.Body = html;
+            app.Calls = {
+                onClose: function () {
+                    Core.Threads.RemoveByName(id);
+                }
+            };
+            Ui.CreateWindow(app, function () {
+                app.Render(id);
+            });
+            return app;
+        });
+    };
 
     function preload(callback) {
         for (var i = 0; i < nativeApps.length; i++) {
-            nativeApps[i].AppId = Util.GetDataId();
+            nativeApps[i].AppId = Util.GetDataId("nativeApp_");
         }
         if (callback)
             callback();
