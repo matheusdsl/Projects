@@ -326,6 +326,7 @@
             text-align: center;
             cursor: default;
             display: none;
+            z-index: 999;
         }
 
             .taskbar .util-area .calendar-area .calendar-clock {
@@ -653,7 +654,7 @@ table.simpleTable {
 
     .aba_collection .aba_item {
         float: left;
-        margin-left: 5px;
+        margin-left: 1px;
         margin-top: 2px;
         border-top: 1px solid #777;
         border-right: 1px solid #777;
@@ -671,6 +672,9 @@ table.simpleTable {
         .aba_collection .aba_item.selected {
             background: #eee;
             box-shadow: 0px -1px 0px 0px #58a1c2;
+        }
+        .aba_collection .aba_item.selected:hover {
+            color: #58a1c2;
         }
 
 .aba_container {

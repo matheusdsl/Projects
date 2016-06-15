@@ -58,6 +58,10 @@
         });
     };
 
+    public.ToFront = function (el, callback, EvidenceManual, selector) {
+        Window.ToFront(el, callback, EvidenceManual, selector);
+    };
+
     //private
     var window_status = { RUNNING: "RUNNING", NO_REPLY: "NO REPLY" };
     var window_status_exhibition = { CUSTOM: "CUSTOM", MINIMIZED: "MINIMIZED", MAXIMIZED: "MAXIMIZED" };
@@ -120,6 +124,7 @@
                     Taskbar.AddTask($Window, getWindows(), function () {
                         getWindows($Window);
                         element.fadeIn(200);
+                        toFront(element, null, true);
                         toEvidence(element, 500);
 
                         Util.Sleep(function () {
@@ -158,8 +163,8 @@
             removeWindow(id, callback);
         };
 
-        protected.ToFront = function (el, callback) {
-            toFront(el, callback);
+        protected.ToFront = function (el, callback, EvidenceManual, selector) {
+            toFront(el, callback, EvidenceManual, selector);
         };
 
         protected.MinimizeWindow = function (el, obj, visible) {
@@ -226,7 +231,7 @@
             });
 
             el.find(".top-bar").mousedown(function () {
-                el.addClass('evidence');
+                toEvidence(el, 5000);
             });
 
             el.find(".top-bar").mouseup(function () {
@@ -428,10 +433,10 @@
             return obj;
         }
 
-        function toFront(el, callback, EvidenceManual) {
-
+        function toFront(el, callback, EvidenceManual, selector) {
+            selector = Util.SimpleValidation(selector, ".evidence-group-1");
             var last_z = 0;
-            $(".window").map(function (i, element) {
+            $(selector).map(function (i, element) {
                 var z = parseInt($(element).css("z-index"));
                 if (z > last_z)
                     last_z = z;
@@ -452,7 +457,7 @@
             el.addClass('evidence');
 
             if (removeTime !== "undefined" && removeTime !== null) {
-                setTimeout(function () {
+                Util.Sleep(function () {
                     el.removeClass('evidence');
                 }, removeTime);
             }
@@ -517,6 +522,21 @@
                 var html = Component.Task.Item(task.Id, task.Ico);
 
                 $(".task-area").append(html);
+
+                $("#task" + task.Id + " .ico").click(function () {
+                    var count = $("#task" + task.Id + " .box-wrapper").length;
+
+                    if (count === 1) {
+                        Util.Find(Window.GetWindows(), "obj.AppId === '" + task.Id + "'", function (obj) {
+
+                            if (obj.Exhibition === window_status_exhibition.MINIMIZED)
+                                $("#task" + task.Id + " .box-wrapper .box-container").trigger("click");
+                            else
+                                Window.TriggerMinimize(obj._element);
+
+                        });
+                    }
+                });
 
                 addWindowToTask(w, callback, task);
             });

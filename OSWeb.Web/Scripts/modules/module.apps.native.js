@@ -187,7 +187,6 @@ var NativeApps = (function () {
                 parent.addClass("is-visible");
                 parent.removeClass("not-visible");
                 parent.slideToggle(timeEffect);
-
                 var mousewheelevt = (/Firefox/i.test(navigator.userAgent)) ? "DOMMouseScroll" : "mousewheel";
                 $("#" + divId).bind(mousewheelevt, function (e) {
 

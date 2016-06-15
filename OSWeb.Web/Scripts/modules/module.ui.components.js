@@ -44,7 +44,7 @@
                 if ((i + 1) < array.length) {
                     html += '$("#aba' + id + ' .aba_container.item' + (i + 1) + '").hide();' +
                     '$("#aba' + id + ' .aba_item.item' + (i + 1) + '").removeClass("selected");';
-                }                
+                }
             }
 
             for (var i = 0; i < array.length; i++) {
@@ -106,6 +106,20 @@
     };
 
     public.Table = {
+        New: function (id, name, clazz, header, rows, footer) {
+            var _id = Util.SimpleValidation(id, Util.GetDataId("table"));
+            var html = "<table id='" + _id
+                + "' name='" + Util.SimpleValidation(name, Util.GetDataId())
+                + "' class='" + Util.SimpleValidation(clazz, "simpleTable") + "'>";
+            html += Util.SimpleValidation(header, "<thead></thead>");
+            html += Util.SimpleValidation(rows, "");
+            html += Util.SimpleValidation(footer, "<tfoot></tfoot>");
+            html += "</table>";
+            return {
+                id: _id,
+                html: html
+            };
+        },
         Header: function (columns) {
             var html = "<thead><tr>";
 
@@ -129,7 +143,8 @@
             html += "</tr>";
 
             return html;
-        },
+        }
+
     };
 
     return public;
