@@ -79,7 +79,7 @@
         }
     }
 
-    public.Each = function (array, condition, callback) {
+    public.Each = function (array, condition, callback, finish) {
 
         for (var i = 0; i < length; i++) {
             var obj = array[i];
@@ -88,6 +88,7 @@
                     callback(obj, i);
             }
         }
+        finish();
     }
 
     public.RemoveFromArray = function (array, i) {
@@ -110,10 +111,49 @@
     };
 
     public.SimpleValidation = function (obj, value) {
-        if (typeof (obj) == "undefined" || obj === null)
+        if (typeof (obj) == "undefined" || obj === null) {
             return value;
+        }
         return obj;
-    }
+    };
+
+    public.ConcatValidation = function (array, callback) {
+        var obj = array[0];
+        for (var i = 1; i <= array.length; i++) {
+            try {
+                if (typeof (eval(obj)) == "undefined" || eval(obj) === null) {
+                    callback(false, obj);
+                    return false;
+                }
+                else {
+                    obj += "." + array[i];
+                }
+            }
+            catch (e) {
+                callback(false, obj);
+                return false;
+            }
+        }
+        callback(true, eval(obj));
+        return true;
+    };
+
+    public.Count = function (array, condition, callback) {
+        var count = 0;
+        public.Each(array, condition, function (obj, i) {
+            count++;
+        }, function () {
+            callback(count);
+        });
+    };
+
+    public.IsFunction = function (obj) {
+        var getType = {};
+        return
+        (typeof obj === "function") ||
+        (obj && getType.toString.call(obj) === '[object Function]') ||
+        (obj && getClass.call(obj) == '[object Function]');
+    };
 
     public.Now = {
         DateTime: function () {

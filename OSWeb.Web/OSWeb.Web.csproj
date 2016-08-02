@@ -232,6 +232,11 @@
     <Content Include="Scripts\html2canvas.js" />
     <Content Include="Content\inc\jquery.contextMenu.min.css" />
     <Content Include="Scripts\inc\jquery.contextMenu.min.js" />
+    <Content Include="Scripts\inc\jquery.fixedheadertable.min.js" />
+    <Content Include="Scripts\inc\jquery.tablesorter.min.js" />
+    <Content Include="Scripts\inc\jquery.tablesorter.widgets.min.js" />
+    <Content Include="Scripts\inc\sorttable.js" />
+    <Content Include="Scripts\inc\table.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -245,6 +250,8 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\main.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\modules\module.apps.extend.js" />
+    <Content Include="Scripts\modules\module.apps.core.js" />
     <Content Include="Scripts\modules\module.apps.native.js" />
     <Content Include="Scripts\modules\module.apps.native\ckeditor\adapters\jquery.js" />
     <Content Include="Scripts\modules\module.apps.native\ckeditor\build-config.js" />
@@ -874,6 +881,7 @@
     <Content Include="Scripts\modules\module.apps.native\ckeditor\samples\toolbarconfigurator\font\fontello.woff" />
     <Content Include="Scripts\modules\module.apps.native\ckeditor\samples\toolbarconfigurator\lib\codemirror\LICENSE" />
     <Content Include="Scripts\modules\module.apps.native\ckeditor\skins\moono-dark\readme.md" />
+    <Content Include="Views\Ui\AppTest.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

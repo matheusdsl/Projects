@@ -3,6 +3,12 @@
 
     public.Init = function (callback) {
 
+        Util.ConcatValidation(["Exception", "Generic"], function (valid, obj) {
+            if (!valid) {
+               Core.Popup.Offline("Module Not Found", "The module Core not found.");                
+            }
+        });
+
         startWorkArea(function () {
             Taskbar.Init();
 
@@ -16,17 +22,27 @@
         Window.CreateWindow(config, callback);
     };
 
-    public.ShowLoading = function (msg, parent, callback) {
-        if (!msg) msg = "Loading...";
+    public.ShowLoading = function (msg, parent, callback, clazz) {
+        msg = Util.SimpleValidation(msg, "Loading...");
+        clazz = Util.SimpleValidation(clazz, "");
         if (!parent) parent = $("body");
-        var html = "<div id='loading' class='overlay' style='display:none;'><div class='loading'>" + msg + "</div></div>";
-        $(parent).append(html);
-        $("#loading").fadeIn(0);
-        if (callback) callback();
+        var id = Util.GetDataId("loading");
+        var html = "<div id='" + id + "' class='overlay " + clazz + "' style='display:none;'><div class='loading'>" + msg + "</div></div>";
+        parent.append(html);
+        $("#" + id).fadeIn(0);
+        if (callback) callback(id);
     };
 
-    public.RemoveLoading = function () {
-        $("#loading").fadeOut(300, function () { $("#loading").remove(); });
+    public.ShowWindowLoading = function (msg, parent, callback) {
+        public.ShowLoading(msg, parent, callback, "overlay-window");
+    };
+
+    public.RemoveLoading = function (id) {
+        if (!id) {
+            Core.Popup.Error("Loading ID not set");
+            id = "loading";
+        }
+        $("#" + id).fadeOut(300, function () { $("#" + id).remove(); });
     }
 
     public.MakeDraggable = function (el, config) {
@@ -89,8 +105,6 @@
     var Window = (function () {
         function protected() { }
 
-        var Windows;
-
         var window_last_zindex = 100;
 
         protected.CreateWindow = function (config, callback) {
@@ -101,43 +115,59 @@
                 function (data) {
                     $(".work-area").append(data);
 
-                    var element = $("#window" + id)
+                    var element = $("#window" + id);
 
-                    var $Window = {
-                        Id: id,
-                        Status: window_status.RUNNING,
-                        PreviousExhibition: null,
-                        Exhibition: window_status_exhibition.CUSTOM,
-                        Draggable: Util.SimpleValidation(config.Draggable, true),
-                        Resizable: Util.SimpleValidation(config.Resizable, true),
-                        AppId: obj.Parameters.AppId,
-                        Task: {},
-                        _window: obj,
-                        _element: element
-                    };
+                    Ui.ShowWindowLoading('<i class="fa fa-spinner fa-pulse"></i>', element, function (loadingId) {
+                        element.fadeIn(50);
 
-                    if (!config.Calls)
-                        config.Calls = {};
 
-                    setEventsWindow($Window, config.Calls);
+                        var $Window = {
+                            Id: id,
+                            Status: window_status.RUNNING,
+                            PreviousExhibition: null,
+                            Exhibition: window_status_exhibition.CUSTOM,
+                            Draggable: Util.SimpleValidation(config.Draggable, true),
+                            Resizable: Util.SimpleValidation(config.Resizable, true),
+                            AppId: obj.Parameters.AppId,
+                            Task: {},
+                            _window: obj,
+                            _element: element
+                        };
 
-                    Taskbar.AddTask($Window, getWindows(), function () {
-                        getWindows($Window);
-                        element.fadeIn(200);
-                        toFront(element, null, true);
-                        toEvidence(element, 500);
+                        if (!config.Calls)
+                            config.Calls = {};
 
-                        Util.Sleep(function () {
-                            public.PrintArea($("#window" + $Window.Id + " .body"), function (canvas) {
-                                if ($Window.Exhibition !== window_status_exhibition.MINIMIZED) {
-                                    var myImage = canvas.toDataURL("image/gif");
-                                    $("#taskbox" + $Window.Id + " .box-container").html("<img src='" + myImage + "'/>");
-                                }
-                            });
-                        }, 500);
+                        setEventsWindow($Window, config.Calls);
 
-                        if (callback)
-                            callback($Window);
+                        Taskbar.AddTask($Window, getWindows(), function () {
+                            getWindows($Window);
+
+                            //if (!obj.Parameters.IsNative) {
+                            //    element.find(".body").html('<iframe class="app-content" id="appContent' + id + '"></iframe>');
+                            //    App.Container.SetContent("#appContent" + id, obj.Parameters.Body);
+                            //}
+
+
+                            toFront(element, null, true);
+                            toEvidence(element, 500);
+
+                            Util.Sleep(function () {
+                                public.PrintArea($("#window" + $Window.Id + " .body"), function (canvas) {
+                                    if ($Window.Exhibition !== window_status_exhibition.MINIMIZED) {
+                                        var myImage = canvas.toDataURL("image/gif");
+                                        $("#taskbox" + $Window.Id + " .box-container").html("<img src='" + myImage + "'/>");
+                                    }
+                                });
+                            }, 500);
+
+                            if (callback)
+                                callback($Window, function () {
+                                    Ui.RemoveLoading(loadingId);
+                                });
+
+                            //Ui.RemoveLoading(loadingId);
+                        });
+
                     });
                 },
                 function (x1, x2, x3) {
@@ -261,9 +291,8 @@
         }
 
         function getWindows(_new) {
-            if (!Windows) Windows = new Array();
-            if (_new) Windows.push(_new);
-            return Windows;
+            if (_new) Core.Windows.Add(_new);
+            return Core.Windows.Get();
         }
 
         function getWindow(id, callback) {
@@ -277,8 +306,7 @@
         }
 
         function countWindows() {
-            if (!Windows) return 0;
-            return Windows.length;
+            return Core.Windows.Count();
         }
 
         function getNextLocationWindow() {
@@ -289,19 +317,19 @@
 
         function removeWindow(id, callback, index) {
             if (index !== 'undefined' && index !== null) {
-                Windows.splice(index, 1);
+                Core.Windows.Splice(index, 1);
                 callback();
             }
             else {
                 Util.Find(getWindows(), "obj.Id == '" + id + "'", function (obj, i) {
-                    Windows.splice(i, 1);
+                    Core.Windows.Splice(i, 1);
                     if (callback)
                         callback(i);
                 });
             }
         }
 
-        function closeWindow(el, onClose) {
+        function closeWindow(el, onClose) {            
             Util.Find(getWindows(), "obj.Id == '" + el.data('window') + "'",
                 function (obj, i) {
                     obj.Status = window_status.NO_REPLY;

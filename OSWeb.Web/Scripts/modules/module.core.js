@@ -1,6 +1,8 @@
 ﻿var Core = (function () {
     function public() { }
 
+    var windows = new Array();
+    var applications = new Array();
     var threads = new Array();
 
     public.Threads = {
@@ -10,6 +12,8 @@
         Find: function (name, callback) {
             Util.Find(Core.Threads.Get(), "obj.name === '" + name + "'", function (thread) {
                 callback(thread);
+            }, function () {
+                callback(false);
             });
         },
         Add: function (method, time, name) {
@@ -40,12 +44,102 @@
         }
     };
 
+    public.Applications = {
+        Get: function () {
+            return applications;
+        },
+        Find: function (name, callback) {
+            Util.Find(applications, "obj.name === '" + name + "'", function (app) {
+                callback(app);
+            }, function () {
+                callback(false);
+            });
+        },
+        Add: function (app) {
+            var obj;
+            if (app) {
+                applications.push(app);
+            }
+            else {
+                Exception("App invalid.");
+                return;
+            }
+            return obj;
+        },
+        Remove: function (obj) {
+            Util.Find(applications, "obj.Id == '" + obj.Id + "'", function (app, i) {
+                Util.RemoveFromArray(applications, i);
+            }, function () {
+                Exception("App not found.");
+            });
+        },
+        Splice: function (index, qtd) {
+            applications.splice(index, qtd);
+        },
+        Count: function () {
+            return applications.length;
+        }
+    };
+
+    public.Windows = {
+        Get: function () {
+            return windows;
+        },
+        FindByName: function (name, callback) {
+            Util.Find(windows, "obj.name === '" + name + "'", function (w) {
+                callback(w);
+            }, function () {
+                callback(false);
+            });
+        },
+        Add: function (w) {
+            var obj;
+            if (w) {
+                windows.push(w);
+            }
+            else {
+                Exception("Window invalid.");
+                return;
+            }
+            return obj;
+        },
+        Remove: function (obj) {
+            Util.Find(windows, "obj.Id == '" + obj.Id + "'", function (w, i) {
+                Util.RemoveFromArray(windows, i);
+            }, function () {
+                Exception("Window not found.");
+            });
+        },
+        Splice: function (index, qtd) {
+            windows.splice(index, qtd);
+        },
+        Count: function (appId, callback) {
+            if (appId) {
+
+                Util.Count(windows, "obj.AppId === '" + appId + "'", function (qtd) {
+                    if (callback) callback(qtd);
+                    return qtd;
+                });
+            }
+            else {
+                if (callback) callback(window.length);
+                return windows.length;
+            }
+        }
+    };
+
     public.Init = function (callback) {
+
+        $(document).get(0).onkeypress = khandle;
+
         Util.Sleep(function () {
             Ui.Init(function () {
                 NativeApps.Init(function () {
                     callback();
                     Ui.RemoveLoading();
+
+
+                    $(".work-area").append(Component.WorkArea.Icon(0, "<i class='fa fa-close'></i>", "João Batista Leite Lima"));
                 });
             });
         }, 500);
@@ -73,7 +167,9 @@
             });
         },
         Error: function (message) {
-            NativeApps.PopupError(message);
+            NativeApps.PopupError(message, function (w) {
+
+            });
         },
         Offline: function (title, message) {
             NativeApps.PopupOffline(title, message, function (obj) {
@@ -143,6 +239,29 @@
             if (callback) callback();
         }
     };
+
+    function khandle(e) {
+        e = e || event
+
+        var evt = e.type;
+        //while (evt.length < 10) evt += ' '
+        //showmesg(evt +
+        //  ' keyCode=' + e.keyCode +
+        //  ' which=' + e.which +
+        //  ' charCode=' + e.charCode +
+        //  ' char=' + String.fromCharCode(e.keyCode || e.charCode) +
+        //  (e.shiftKey ? ' +shift' : '') +
+        //  (e.ctrlKey ? ' +ctrl' : '') +
+        //  (e.altKey ? ' +alt' : '') +
+        //  (e.metaKey ? ' +meta' : ''), 'key'
+        //)
+
+        // if (document.forms.keyform[e.type + 'Stop'].checked) {
+        alert(e.keyCode);
+        e.preventDefault ? e.preventDefault() : (e.returnValue = false)
+        ///}
+    }
+
 
 
     return public;

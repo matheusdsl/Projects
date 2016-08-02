@@ -22,5 +22,12 @@ namespace OSWeb.Web.Controllers
         {
             return PartialView("Window", model);
         }
+
+        [ValidateInput(false)]
+        [HttpPost]
+        public PartialViewResult AppTest()
+        {
+            return PartialView("AppTest");
+        }
     }
 }

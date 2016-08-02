@@ -486,7 +486,7 @@ td.ui-datepicker-today, td.ui-datepicker-today a {
 }
 
 .overlay {
-    position: fixed;
+    position: absolute;
     top: 0px;
     bottom: 0px;
     left: 0px;
@@ -496,15 +496,30 @@ td.ui-datepicker-today, td.ui-datepicker-today a {
 }
 
     .overlay .loading {
-        margin-left: auto;
-        margin-right: auto;
-        margin-top: 25%;
-        width: 80%;
+        left: auto;
+        right: auto;
+        top: 45%;
+        height: 30px;
+        background: rgba(0,0,0,0.8);
+        width: 100%;
         text-align: center;
         color: #fff;
         font-size: 16px;
         z-index: 999999;
+        position: absolute;
     }
+
+    .overlay.overlay-window {
+        top: 20px;
+        background: rgba(255,255,255,1);
+    }
+
+        .overlay.overlay-window .loading {
+            height: 35px;
+            color: #58a1c2;
+            font-size: 30px;
+            background: rgba(0,0,0,0);
+        }
 
 #loading {
     display: block;
@@ -541,12 +556,12 @@ td.ui-datepicker-today, td.ui-datepicker-today a {
 
 .monitor .browserMonitor {
     background: rgba(0,0,0,0.2);
-    width: 50px;
-    height: 28px;
+    width: 18px;
+    height: 19px;
     right: 0px;
     position: relative;
     overflow: hidden;
-    margin: 1px;
+    margin: 6px;
     float: right;
 }
 
@@ -564,15 +579,19 @@ td.ui-datepicker-today, td.ui-datepicker-today a {
 }
 
 .monitor .ACM_graphUnit {
-    width: 3px;
+    width: 18px;
     height: 1%;
-    margin-right: 2px;
+    margin-right: 0px;
     padding: 0px;
     display: inline-block;
-    background: #999;
-    border-top: 1px solid #fff;
+    background: #6ba15e;
+    border-top: 1px solid #6ba15e;
 }
 
+    .monitor .ACM_graphUnit.color1 {
+        background: #7bbd6f;
+        border-top: 1px solid #7bbd6f;
+    }
 
 .context-menu {
     position: fixed;
@@ -646,11 +665,15 @@ table.simpleTable {
     }
 
 .aba_collection {
-    float: left;
     width: 100%;
-    border-bottom: 10px solid #eee;
-    background: rgba(0,0,0,0.2);
+    border-bottom: 10px solid #ddd;
+    background: #eee;
+    float: left;
 }
+
+    .aba_collection.fix {
+        position: absolute;
+    }
 
     .aba_collection .aba_item {
         float: left;
@@ -665,19 +688,21 @@ table.simpleTable {
         cursor: default;
         box-shadow: 0px -1px 0px 0px #fff;
     }
-    .aba_collection .aba_item:hover {
-        color: #fff;
-        background: #58a1c2;
-    }
+
+        .aba_collection .aba_item:hover {
+            color: #fff;
+            background: #58a1c2;
+        }
+
         .aba_collection .aba_item.selected {
             background: #eee;
             box-shadow: 0px -1px 0px 0px #58a1c2;
         }
-        .aba_collection .aba_item.selected:hover {
-            color: #58a1c2;
-        }
+
+            .aba_collection .aba_item.selected:hover {
+                color: #58a1c2;
+            }
 
 .aba_container {
-    float: left;
     width: 100%;
 }
