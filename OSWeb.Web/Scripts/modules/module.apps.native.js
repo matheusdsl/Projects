@@ -93,8 +93,6 @@ var NativeApps = (function () {
                     function refresh() {
                         tasks = Ui.GetWindows();
                         threads = Core.Threads.Get();
-
-                        //var el = $("#aba" + id);
                         var el_tasks = $("div._" + id_tasks);
                         var el_threads = $("div._" + id_threads);
 
@@ -158,7 +156,8 @@ var NativeApps = (function () {
             XLocation: null,
             YLocation: null,
             Background: "#eee",
-            IsNative: true
+            IsNative: true,
+            AllowMultiple: false
         }
     ];
 
@@ -170,11 +169,6 @@ var NativeApps = (function () {
             //};
             public.Clock($(".clock-area"));
             public.Calendar($(".calendar-area"));
-            public.BrowserMonitor($(".notification-area"));
-            $(".browserMonitor").click(function () {
-                //public.ThreadViewer();
-                public.TaskManager();
-            });
 
             if (callback) callback();
         });
@@ -244,7 +238,7 @@ var NativeApps = (function () {
     public.BrowserMonitor = function (parent) {
         var progress;
         var timer;
-        var constante = 500;
+        var constante = 750;
         function libs() {
             progress = "undefined" == typeof progress ? function () { var e = {}, t = 0, n = [], o = function (e) { for (var t = 0, n = 0, o = +bottomline, r = 0; r < e.length; r++) { var a = +e[r]; a < bottomline ? t += o : a > topline && (t += a), n += a } var l = n / 100, c = t ? t / l : 0; return { p: c > 100 ? 100 : c, r: t } }; return e.build = function (e) { var t = "string" == typeof e ? document.getElementById(e) : e; t.className = "browserMonitor"; var o = t.appendChild(document.createElement("span")); o.className = "leader"; var r = t.appendChild(document.createElement("div")); r.className = "hiding"; var a = document.createDocumentFragment(), l = document.createElement("span"); l.style; l.className = "ACM_graphUnit"; for (var c = 0; 18 > c; c++) n.unshift(a.appendChild(l.cloneNode(!0))); t.appendChild(a) }, e.do_next = function (e) { var t = n.pop(), o = t.parentNode; n.unshift(t), o.removeChild(t), t.style.height = (e >= 100 ? 100 : ++e) + "%", o.appendChild(t) }, e.do_test = function () { var e = n.length; setTimeout(function t() { var n = ~~(100 * Math.random()); this.do_next(n), --e && setTimeout(t, constante) }, constante) }, e.push = function (e, n) { var r = o(e), a = r.r + t; if (a > n) { for (var l = ~~(a / n), c = 0; l > c; c++) this.do_next(100), a -= n; t = a } else this.do_next(r.p), t = 0 }, e.collect = function () { timer.collect(), collector.start(e) }, e.stop = function () { timer.stop(), collector.stop() }, e }() : progress, collector = "undefined" == typeof collector ? function () { var e, t = constante, n = {}; return n.start = function (n) { if (e) return void debug("Collector already started"); var o = t; var aux_color = 0; Core.Threads.Add(function () { var e = window.stack; e.length && (window.stack = [], n.push(e, o)); $(".ACM_graphUnit").toggleClass("color1"); }, t, "BrowserMonitor"); }, n.stop = function () { Core.Threads.RemoveByName("BrowserMonitor"); }, n }() : collector;
             window.topline = null; window.bottomline = null; window.stack = [];
@@ -252,22 +246,17 @@ var NativeApps = (function () {
             $(".ACM_graphUnit").addClass("color1");
         }
         libs();
-
         function connect(node, event, fnc) {
             node[event] = fnc;
         }
-
         function disconnect(node, event) {
             node[event] = null;
         }
-
         var divId = Util.GetDataId("monitor");
-
         var root = document.createElement("div");
         root.title = "Browser Monitor (amonjs on GitHub)";
         root.className = "monitor";
         root.id = divId;
-
         var progressNode = root.appendChild(document.createElement("div"));
         if (parent) {
             parent.append($(root));
@@ -276,10 +265,8 @@ var NativeApps = (function () {
             document.body.appendChild(root);
         }
         progress.build(progressNode);
-
         var running = false;
         var calibrated = false;
-
         function clicker() {
             if (calibrated) {
                 if (running) {
@@ -467,25 +454,36 @@ var NativeApps = (function () {
             var html = Component.Window.Aba(id,
                 [
                     { title: "Tasks", body: "<div class='_" + id_tasks + "'></div>" },
-                    { title: "Threads", body: "<div class='_" + id_threads + "'></div>" },
+                    { title: "Threads", body: "<div class='_" + id_threads + "'></div>" }
                 ]);
 
             app.Body += html;
             app.Calls = {
-                onClose: function (w) {
+                beforeClose: function (w, close) {
                     Core.Windows.Count(app.AppId, function (qtd) {
-                        if(qtd <= 1) {
-                            Core.Threads.Find("TaskManager", function (obj) {
-                                if (!obj) {
-                                    Core.Threads.RemoveByName("TaskManager");
-                                }
+                        if (qtd === 1) {
+                            Core.Threads.RemoveByName("TaskManager", function () {
+                                if (close)
+                                    close();
                             });
+                            Core.Threads.RemoveByName("BrowserMonitor", function () {
+                                $("#notification" + app.AppId).remove();
+                            });
+                        }
+                        else {
+                            if (close)
+                                close();
                         }
                     });
                 }
             };
             Ui.CreateWindow(app, function (_w, finishLoading) {
                 app.Render(id, id_tasks, id_threads, finishLoading);
+
+                Ui.AddNotificationApp(app, function (el) {
+                    public.BrowserMonitor(el);
+                });
+   
             });
             return app;
         });

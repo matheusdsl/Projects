@@ -5,7 +5,7 @@
 
         Util.ConcatValidation(["Exception", "Generic"], function (valid, obj) {
             if (!valid) {
-               Core.Popup.Offline("Module Not Found", "The module Core not found.");                
+                Core.Popup.Offline("Module Not Found", "The module Core not found.");
             }
         });
 
@@ -78,6 +78,10 @@
         Window.ToFront(el, callback, EvidenceManual, selector);
     };
 
+    public.AddNotificationApp = function (app, callback) {
+        Taskbar.AddNotificationApp(app, callback);
+    };
+
     //private
     var window_status = { RUNNING: "RUNNING", NO_REPLY: "NO REPLY" };
     var window_status_exhibition = { CUSTOM: "CUSTOM", MINIMIZED: "MINIMIZED", MAXIMIZED: "MAXIMIZED" };
@@ -108,81 +112,104 @@
         var window_last_zindex = 100;
 
         protected.CreateWindow = function (config, callback) {
-            var id = Util.GetDataId();
-            var obj = setDefaultConfigWindow(id, config);
-            var online = true;
-            Util.Ajax("/Ui/Window", obj,
-                function (data) {
-                    $(".work-area").append(data);
 
-                    var element = $("#window" + id);
+            if (!Util.SimpleValidation(config, false)) {
+                Core.Popup.Error("App not set.");
+                return false;
+            }
 
-                    Ui.ShowWindowLoading('<i class="fa fa-spinner fa-pulse"></i>', element, function (loadingId) {
-                        element.fadeIn(50);
+            function create() {
+                var id = Util.GetDataId();
+                var obj = setDefaultConfigWindow(id, config);
+                var online = true;
+                Util.Ajax("/Ui/Window", obj,
+                    function (data) {
+                        $(".work-area").append(data);
 
+                        var element = $("#window" + id);
 
-                        var $Window = {
-                            Id: id,
-                            Status: window_status.RUNNING,
-                            PreviousExhibition: null,
-                            Exhibition: window_status_exhibition.CUSTOM,
-                            Draggable: Util.SimpleValidation(config.Draggable, true),
-                            Resizable: Util.SimpleValidation(config.Resizable, true),
-                            AppId: obj.Parameters.AppId,
-                            Task: {},
-                            _window: obj,
-                            _element: element
-                        };
-
-                        if (!config.Calls)
-                            config.Calls = {};
-
-                        setEventsWindow($Window, config.Calls);
-
-                        Taskbar.AddTask($Window, getWindows(), function () {
-                            getWindows($Window);
-
-                            //if (!obj.Parameters.IsNative) {
-                            //    element.find(".body").html('<iframe class="app-content" id="appContent' + id + '"></iframe>');
-                            //    App.Container.SetContent("#appContent" + id, obj.Parameters.Body);
-                            //}
+                        public.ShowWindowLoading('<i class="fa fa-spinner fa-pulse"></i>', element, function (loadingId) {
+                            element.fadeIn(50);
 
 
-                            toFront(element, null, true);
-                            toEvidence(element, 500);
+                            var $Window = {
+                                Id: id,
+                                Status: window_status.RUNNING,
+                                PreviousExhibition: null,
+                                Exhibition: window_status_exhibition.CUSTOM,
+                                Draggable: Util.SimpleValidation(config.Draggable, true),
+                                Resizable: Util.SimpleValidation(config.Resizable, true),
+                                AppId: obj.Parameters.AppId,
+                                Task: {},
+                                _window: obj,
+                                _element: element
+                            };
 
-                            Util.Sleep(function () {
-                                public.PrintArea($("#window" + $Window.Id + " .body"), function (canvas) {
-                                    if ($Window.Exhibition !== window_status_exhibition.MINIMIZED) {
-                                        var myImage = canvas.toDataURL("image/gif");
-                                        $("#taskbox" + $Window.Id + " .box-container").html("<img src='" + myImage + "'/>");
-                                    }
-                                });
-                            }, 500);
+                            if (!config.Calls)
+                                config.Calls = {};
 
-                            if (callback)
-                                callback($Window, function () {
-                                    Ui.RemoveLoading(loadingId);
-                                });
+                            setEventsWindow($Window, config.Calls);
 
-                            //Ui.RemoveLoading(loadingId);
+                            Taskbar.AddTask($Window, getWindows(), function () {
+                                getWindows($Window);
+
+                                //if (!obj.Parameters.IsNative) {
+                                //    element.find(".body").html('<iframe class="app-content" id="appContent' + id + '"></iframe>');
+                                //    App.Container.SetContent("#appContent" + id, obj.Parameters.Body);
+                                //}
+
+
+                                toFront(element, null, true);
+                                toEvidence(element, 500);
+
+                                Util.Sleep(function () {
+                                    public.PrintArea($("#window" + $Window.Id + " .body"), function (canvas) {
+                                        if ($Window.Exhibition !== window_status_exhibition.MINIMIZED) {
+                                            var myImage = canvas.toDataURL("image/gif");
+                                            $("#taskbox" + $Window.Id + " .box-container").html("<img src='" + myImage + "'/>");
+                                        }
+                                    });
+                                }, 500);
+
+                                if (callback)
+                                    callback($Window, function () {
+                                        Ui.RemoveLoading(loadingId);
+                                    });
+
+                                //Ui.RemoveLoading(loadingId);
+                            });
+
                         });
-
-                    });
-                },
-                function (x1, x2, x3) {
-                    Exception(null, function () {
-                        if (x1.readyState === 0) {
-                            if (online) {
-                                online = false;
-                                Core.Popup.Offline("<b>Connection Refused!</b>");
+                    },
+                    function (x1, x2, x3) {
+                        Exception(null, function () {
+                            if (x1.readyState === 0) {
+                                if (online) {
+                                    online = false;
+                                    Core.Popup.Offline("<b>Connection Refused!</b>");
+                                }
                             }
-                        }
-                        else {
-                            Core.Popup.Error(x1.responseText);
-                        }
+                            else {
+                                Core.Popup.Error(x1.responseText);
+                            }
+                        });
                     });
+            }
+
+            if (config.AllowMultiple || Util.SimpleValidation(config.AllowMultiple, true)) {
+                create();
+            }
+            else {
+                Core.Windows.Count(config.AppId, function (qtd) {
+                    if (qtd < 1)
+                        create();
+                    else {
+                        Core.Windows.FindByAppId(config.AppId, function (w) {
+                            public.ToFront(w._element, null, false, null);
+                        });
+                    }
                 });
+            }
         };
 
         protected.GetWindows = function () {
@@ -229,8 +256,8 @@
             getNextLocationWindow();
         };
 
-        protected.CloseWindow = function (el, onClose) {
-            closeWindow(el, onClose);
+        protected.CloseWindow = function (el, onClose, beforeClose) {
+            closeWindow(el, onClose, beforeClose);
         };
 
         protected.TriggerClose = function (el) {
@@ -243,6 +270,10 @@
 
         protected.TriggerResize = function (el) {
             $(el).find(".btn-resize").trigger("click");
+        };
+
+        protected.ShowMinimized = function (el, obj, visible) {
+            showWindow(el, obj, visible);
         };
 
         function setEventsWindow(w, calls) {
@@ -270,13 +301,14 @@
 
             el.find(".btn-close").click(function () {
                 if (!calls.onClose) calls.onClose = null;
-                closeWindow(el, calls.onClose);
+                if (!calls.beforeClose) calls.beforeClose = null;
+                closeWindow(el, calls.onClose, calls.beforeClose);
             });
 
             el.find(".btn-resize").click(function () {
                 Util.Find(getWindows(), "obj.Id == '" + el.data('window') + "'", function (obj, i) {
                     resizeWindow(el, obj, obj.Exhibition == window_status_exhibition.MAXIMIZED);
-                    if (calls.onResize) calls.onResize();
+                    if (calls.onResize) calls.onResize(obj);
                 });
             });
 
@@ -329,32 +361,45 @@
             }
         }
 
-        function closeWindow(el, onClose) {            
-            Util.Find(getWindows(), "obj.Id == '" + el.data('window') + "'",
-                function (obj, i) {
-                    obj.Status = window_status.NO_REPLY;
-                    el.css({
-                        'border': '1px solid red',
-                    });
-                    el.fadeOut(100,
-                        function () {
-                            removeWindow(null, function () {
-                                el.remove();
-                                Taskbar.RemoveTask(obj);
-                                if (onClose)
-                                    onClose(obj);
-                            }
-                            , i);
+        function closeWindow(el, onClose, beforeClose) {
+            public.ShowWindowLoading('<i class="fa fa-spinner fa-pulse" style="color:red;"></i>', el, function (loadingId) {
+                Util.Find(getWindows(), "obj.Id == '" + el.data('window') + "'",
+                    function (obj, i) {
+                        function close() {
+                            obj.Status = window_status.NO_REPLY;
+                            el.fadeOut(100,
+                                function () {
+                                    removeWindow(null, function () {
+                                        el.remove();
+                                        Taskbar.RemoveTask(obj);
+                                        public.RemoveLoading(loadingId);
+                                        if (onClose)
+                                            onClose(obj);
+                                    }
+                                    , i);
+                                }
+                            );
                         }
-                    );
-                },
-                function () {
-                    el.fadeOut(500,
-                       function () {
-                           el.remove();
-                       }
-                   );
-                });
+                        if (beforeClose)
+                            beforeClose(obj, function () { close(); });
+                        else
+                            close();
+                    },
+                    function () {
+                        function close() {
+                            el.fadeOut(500,
+                                function () {
+                                    public.RemoveLoading(loadingId);
+                                    el.remove();
+                                }
+                            );
+                        }
+                        if (beforeClose)
+                            beforeClose(el, function () { close(); });
+                        else
+                            close();
+                    });
+            });
         }
 
         function resizeWindow(el, obj, maximized) {
@@ -383,28 +428,35 @@
 
         function minimizeWindow(el, obj, visible) {
             if (visible) {
-                obj.PreviousExhibition = obj.Exhibition;
-                obj.Exhibition = window_status_exhibition.MINIMIZED;
-                $("#taskbox" + obj.Id).css({
-                    "zoom": "0.8"
-                });
-                el.addClass("minimized");
-                el.fadeOut(0);
-                animateMinimizeWindow(el, visible);
+                hideWindow(el, obj, visible);
             }
             else {
-                if (obj.PreviousExhibition !== null)
-                    obj.Exhibition = obj.PreviousExhibition;
-                else
-                    obj.Exhibition = window_status_exhibition.CUSTOM;
-                $("#taskbox" + obj.Id).css({
-                    "zoom": "1"
-                });
-                el.removeClass("minimized");
-                el.fadeIn(100);
-                toFront(el);
+                showWindow(el, obj, visible);
             }
+        }
 
+        function showWindow(el, obj, visible) {
+            if (obj.PreviousExhibition !== null)
+                obj.Exhibition = obj.PreviousExhibition;
+            else
+                obj.Exhibition = window_status_exhibition.CUSTOM;
+            $("#taskbox" + obj.Id).css({
+                "zoom": "1"
+            });
+            el.removeClass("minimized");
+            el.fadeIn(100);
+            toFront(el);
+        }
+
+        function hideWindow(el, obj, visible) {
+            obj.PreviousExhibition = obj.Exhibition;
+            obj.Exhibition = window_status_exhibition.MINIMIZED;
+            $("#taskbox" + obj.Id).css({
+                "zoom": "0.8"
+            });
+            el.addClass("minimized");
+            el.fadeOut(0);
+            animateMinimizeWindow(el, visible);
         }
 
         function animateMinimizeWindow(el, visible) {
@@ -452,6 +504,7 @@
             base.Calls = Util.SimpleValidation(c.Calls, null);
             base.Render = Util.SimpleValidation(c.Render, null);
             base.Background = Util.SimpleValidation(c.Background, "#fff");
+            base.AllowMultiple = Util.SimpleValidation(c.AllowMultiple, true);
 
             var obj = {
                 Id: id,
@@ -518,6 +571,20 @@
                     });
                 }
             });
+        };
+
+        protected.AddNotificationApp = function (app, callback) {
+            var notificationId = "notification" + app.AppId;
+
+            if ($(".notification-area .out").children().length < 3) {
+                $(".notification-area .out").append("<div class='notification-app' id='" + notificationId + "'></div>");
+            }
+            else {
+                $(".notification-area .notification-up .box").append("<div class='notification-app' id='" + notificationId + "'></div>");
+            }
+
+            if (callback)
+                callback($("#" + notificationId));
         };
 
         function refreshCounter(w) {

@@ -2,7 +2,7 @@
     function public() { }
 
     var windows = new Array();
-    var applications = new Array();
+    var applications = new Array();    
     var threads = new Array();
 
     public.Threads = {
@@ -29,17 +29,19 @@
             }
             return obj;
         },
-        Remove: function (obj) {
+        Remove: function (obj, callback) {
             Util.Find(threads, "obj.id == '" + obj.id + "'", function (thread, i) {
-                Thread.Stop(obj.instance);
+                Thread.Stop(obj.instance.number);
                 Util.RemoveFromArray(threads, i);
+                if (callback)
+                    callback();
             }, function () {
                 Exception("Thread not found.");
             });
         },
-        RemoveByName: function (name) {
+        RemoveByName: function (name, callback) {
             public.Threads.Find(name, function (thread) {
-                Core.Threads.Remove(thread);
+                Core.Threads.Remove(thread, callback);
             });
         }
     };
@@ -85,6 +87,13 @@
         Get: function () {
             return windows;
         },
+        FindByAppId: function (appId, callback) {
+            Util.Find(windows, "obj.AppId === '" + appId + "'", function (w) {
+                callback(w);
+            }, function () {
+                callback(false);
+            });
+        },
         FindByName: function (name, callback) {
             Util.Find(windows, "obj.name === '" + name + "'", function (w) {
                 callback(w);
@@ -115,7 +124,6 @@
         },
         Count: function (appId, callback) {
             if (appId) {
-
                 Util.Count(windows, "obj.AppId === '" + appId + "'", function (qtd) {
                     if (callback) callback(qtd);
                     return qtd;
@@ -131,7 +139,7 @@
     public.Init = function (callback) {
 
         $(document).get(0).onkeypress = khandle;
-
+        $("body").append("<div style='display:block' id='temp_area'></div>");
         Util.Sleep(function () {
             Ui.Init(function () {
                 NativeApps.Init(function () {
@@ -139,7 +147,7 @@
                     Ui.RemoveLoading();
 
 
-                    $(".work-area").append(Component.WorkArea.Icon(0, "<i class='fa fa-close'></i>", "João Batista Leite Lima"));
+                    $(".work-area").append(Component.WorkArea.Icon(0, "<i class='fa fa-close' onclick='NativeApps.TaskManager();'></i>", "João Batista Leite Lima"));
                 });
             });
         }, 500);
@@ -204,14 +212,18 @@
         XLocation: null,
         YLocation: null,
         Background: null,
+        AllowMultiple: null,
         Calls: {
-            onClose: function () {
+            beforeClose: function (window, close) {
                 return null;
             },
-            onResize: function () {
+            onClose: function (window) {
                 return null;
             },
-            onResizeStop: function () {
+            onResize: function (window) {
+                return null;
+            },
+            onResizeStop: function (event, ui) {
                 return null;
             }
         },

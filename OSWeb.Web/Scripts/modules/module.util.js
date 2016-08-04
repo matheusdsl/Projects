@@ -81,7 +81,7 @@
 
     public.Each = function (array, condition, callback, finish) {
 
-        for (var i = 0; i < length; i++) {
+        for (var i = 0; i < array.length; i++) {
             var obj = array[i];
             if (condition && eval(condition)) {
                 if (callback)
