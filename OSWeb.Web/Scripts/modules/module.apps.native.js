@@ -194,13 +194,22 @@ var NativeApps = (function () {
         var clockThread;
         var timeEffect = 400;
         parent.addClass("not-visible");
+
+        function hide() {
+            parent.slideToggle(timeEffect, function () {
+                parent.addClass("not-visible");
+                parent.removeClass("is-visible");
+                Core.Threads.Remove(clockThread);
+            });
+        }
+
+        Util.OutClick(".calendar-area, .taskbar .util-area .clock-area", function (e) {
+            if ($(".calendar-area").is(":visible"))
+                hide();
+        });
         $(".taskbar .util-area .clock-area").click(function () {
             if (parent.hasClass("is-visible")) {
-                parent.slideToggle(timeEffect, function () {
-                    parent.addClass("not-visible");
-                    parent.removeClass("is-visible");
-                    Core.Threads.Remove(clockThread);
-                });
+                hide();
             }
             else {
                 parent.html("<div id='clock" + id + "' class='calendar-clock'></div><div id='" + divId + "' class='calendar'></div>");
@@ -467,6 +476,9 @@ var NativeApps = (function () {
                                     close();
                             });
                             Core.Threads.RemoveByName("BrowserMonitor", function () {
+                                if ($(".notification-area .out").children().length == 3) {
+                                    $(".notification-area .notification-up").hide();
+                                }
                                 $("#notification" + app.AppId).remove();
                             });
                         }

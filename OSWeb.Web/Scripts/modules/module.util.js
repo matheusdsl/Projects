@@ -193,6 +193,14 @@
         return thread;
     }
 
+    public.OutClick = function (selector, callback) {
+        $(document).on("click", function (event) {
+            if (!$(event.target).closest(selector).length) {
+                if (callback) callback(event);
+            }
+        })
+    };
+
     //private
     function getDateTime(date, dateWithYear, time, timeWithSec) {
         var d = new Date();

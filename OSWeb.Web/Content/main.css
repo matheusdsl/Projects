@@ -7,6 +7,12 @@
     min-width: 800px;
 }
 
+.debugUi {
+    background: red;
+    color: #000;
+}
+
+
 .work-area {
     position: fixed;
     top: 0;
@@ -35,54 +41,66 @@
         float: none;
     }
 
-        .window .top-bar .left {
-            color: #333;
-            font-size: 14px;
-            padding: 2px;
-            float: left;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            line-height: 18px;
-            cursor: default;
-            width: calc(100% - 130px);
+    .window.selected-window .top-bar {
+        background: #eee;
+    }
+
+    .window.not-selected-window .top-bar {
+        background: #bbb;
+    }
+
+    .window.not-selected-window {
+        box-shadow: 0px 0px 5px 0px #888;
+    }
+
+    .window .top-bar .left {
+        color: #333;
+        font-size: 14px;
+        padding: 2px;
+        float: left;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        line-height: 18px;
+        cursor: default;
+        width: calc(100% - 130px);
+    }
+
+        .window .top-bar .left .icon {
+            margin-right: 5px;
         }
 
-            .window .top-bar .left .icon {
-                margin-right: 5px;
-            }
+    .window .top-bar .right {
+        color: #333;
+        font-size: 14px;
+        float: right;
+        width: 123px;
+    }
 
-        .window .top-bar .right {
-            color: #333;
-            font-size: 14px;
+        .window .top-bar .right .btn {
+            width: 40px;
+            height: 20px;
+            text-align: center;
+            margin-left: 1px;
             float: right;
-            width: 123px;
+            cursor: default;
+            font-size: 15px;
+            color: #777;
         }
 
-            .window .top-bar .right .btn {
-                width: 40px;
-                height: 20px;
-                text-align: center;
-                margin-left: 1px;
-                float: right;
-                cursor: default;
-                font-size: 15px;
-                color: #777;
+            .window .top-bar .right .btn i {
+                font-weight: bold;
+                margin-top: 2px;
             }
 
-                .window .top-bar .right .btn i {
-                    font-weight: bold;
-                    margin-top: 2px;
-                }
-
-                .window .top-bar .right .btn:hover {
-                    background: #ddd;
-                }
-
-            .window .top-bar .right .btn-close:hover {
-                background: #d83d3d;
-                color: #fff;
+            .window .top-bar .right .btn:hover {
+                background: #ddd;
             }
+
+        .window .top-bar .right .btn-close:hover {
+            background: #d83d3d;
+            color: #fff;
+        }
 
     .window.maximized {
         width: 100% !important;
@@ -162,7 +180,7 @@
             height: 28px;
             width: 50px;
             background: transparent;
-            margin-left: 2px;
+            margin-left: 0px;
             border-bottom: 3px solid #999;
             float: left;
         }
@@ -211,9 +229,13 @@
                 display: none;
             }
 
-            .taskbar .task-area .task-item:hover .apps {
+            .taskbar .task-area .task-item.visible:hover .apps {
                 display: block;
             }
+
+            /*.taskbar .task-area .task-item:hover .apps {
+                display: block;
+            }*/
 
             .taskbar .task-area .task-item .apps .box-wrapper {
                 width: 200px;
@@ -319,23 +341,23 @@
                 /*background: red;*/
                 width: 30px;
                 text-align: center;
+                display: none;
             }
 
-                .taskbar .util-area .notification-area .notification-up .box {
-                    position: fixed;
-                    max-width: 137px;
-                    display: none;
-                    background: #222;
-                }
+            .taskbar .util-area .notification-area .out .notification-app {
+                float: right;
+            }
 
-                .taskbar .util-area .notification-area .notification-up:hover {
-                    background: #222;
-                }
+            .taskbar .util-area .notification-area .notification-up .box {
+                position: fixed;
+                max-width: 137px;
+                display: none;
+                background: #222;
+            }
 
-                    .taskbar .util-area .notification-area .notification-up:hover .box {
-                        display: block;
-                    }
-
+            .taskbar .util-area .notification-area .notification-up:hover {
+                background: #222;
+            }
 
         .taskbar .util-area .clock-area {
             width: 92px;
