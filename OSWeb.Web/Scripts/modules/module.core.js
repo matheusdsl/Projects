@@ -147,7 +147,11 @@
                     Ui.RemoveLoading();
 
 
-                    $(".work-area").append(Component.WorkArea.Icon(0, "<i class='fa fa-close' onclick='NativeApps.TaskManager();'></i>", "João Batista Leite Lima"));
+
+                    for (var i = 0; i < 10; i++) {
+                        $(".work-area").append(Component.WorkArea.Icon(0, "<i class='fa fa-close' onclick='NativeApps.TaskManager();'></i>", "Task Manager aaa aaaaaaa aaaa  aaaaaaaa aaaaa aaaaaa aaaaaaaa aaaaa"));
+                    }
+                   
                 });
             });
         }, 500);

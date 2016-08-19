@@ -14,6 +14,14 @@
                    height + "px;'></div>";
             return html;
         },
+        Trail: function (id, top, left, width, height) {
+            var html = "<div id='" + id + "' class='trail-window' style='top:" +
+                   top + "; left: " +
+                   left + "; width:" +
+                   width + "px; height:" +
+                   height + "px;'></div>";
+            return html;
+        },
         Aba: function (id, array) {
             var html = "<div id='aba" + id + "' class='aba'>" +
                        "<div class='aba_collection'>";

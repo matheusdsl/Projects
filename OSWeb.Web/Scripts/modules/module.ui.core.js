@@ -12,6 +12,7 @@
         startWorkArea(function () {
             Taskbar.Init();
             NotificationArea.Init();
+            Icons.Init();
 
             if (callback)
                 callback();
@@ -161,12 +162,7 @@
                                     setEventsWindow($Window, config.Calls);
 
                                     Taskbar.AddTask($Window, getWindows(), function () {
-                                        getWindows($Window);                                        
-                                        
-                                        //if (!obj.Parameters.IsNative) {
-                                        //    element.find(".body").html('<iframe class="app-content" id="appContent' + id + '"></iframe>');
-                                        //    App.Container.SetContent("#appContent" + id, obj.Parameters.Body);
-                                        //}
+                                        getWindows($Window);
 
 
                                         toFront(element, null, true);
@@ -247,13 +243,17 @@
         };
 
         protected.MakeDraggable = function (el, config) {
+
             el.draggable({
                 preventCollision: Util.SimpleValidation(config.preventCollision, false),
                 containment: Util.SimpleValidation(config.containment, ".work-area"),
                 handle: Util.SimpleValidation(config.handle, ".drag"),
                 stack: Util.SimpleValidation(config.stack, ".window"),
                 start: function () {
-                    toFront(el);
+                    toFront(el, null, true, null);
+                },
+                drag: function () {
+
                 }
             });
         };
@@ -262,6 +262,10 @@
             el.resizable({
                 containment: Util.SimpleValidation(config.containment, ".work-area"),
                 helper: Util.SimpleValidation(config.handle, "ui-resizable-helper"),
+                handles: "all",
+                start: function () {
+                    toFront(el, null, true, null);
+                },
                 stop: function (event, ui) {
                     if (onResizeStop)
                         onResizeStop(event, ui);
@@ -308,7 +312,7 @@
                 protected.MakeResizable(el, {}, calls.onResizeStop);
             }
 
-            el.click(function () {
+            el.on("mousedown", function () {
                 toFront(el, null, true);
             });
 
@@ -536,16 +540,15 @@
         }
 
         function activateWindow(el) {
-            Util.Sleep(function () {
-                el.removeClass("not-selected-window");
-                el.addClass("selected-window");
-            }, 100);
-           
+            el.removeClass("not-selected-window");
+            el.addClass("selected-window");
         }
 
-        function desactivateWindows() {
+        function desactivateWindows(callback) {
             $(".window").removeClass("selected-window");
             $(".window").addClass("not-selected-window");
+            if (callback)
+                callback();
         }
 
         function eventdesactiveWindowsOnClickOut() {
@@ -555,9 +558,6 @@
         }
 
         function toFront(el, callback, EvidenceManual, selector) {
-            desactivateWindows();
-            activateWindow(el);
-
             selector = Util.SimpleValidation(selector, ".evidence-group-1");
             var last_z = 0;
             $(selector).map(function (i, element) {
@@ -570,14 +570,19 @@
             el.css({ "z-index": new_z });
 
             if (!EvidenceManual)
-                toEvidence(el, 1500);           
+                toEvidence(el, 1500);
 
             if (callback)
                 callback(new_z);
+
+            Util.Sleep(function () {
+                desactivateWindows();
+                activateWindow(el);
+            }, 50);
         }
 
         function toEvidence(el, removeTime) {
-            
+
             el.addClass('evidence');
 
             if (removeTime !== "undefined" && removeTime !== null) {
@@ -586,6 +591,35 @@
                 }, removeTime);
             }
 
+        }
+
+        function toTransparent(el, removeTime) {
+            el.addClass('transparent');
+
+            if (removeTime !== "undefined" && removeTime !== null) {
+                Util.Sleep(function () {
+                    el.removeClass('transparent');
+                }, removeTime);
+            }
+        }
+
+        function toLight(el, removeTime) {
+            el.addClass('shadow-light');
+
+            if (removeTime !== "undefined" && removeTime !== null) {
+                Util.Sleep(function () {
+                    el.removeClass('shadow-light');
+                }, removeTime);
+            }
+        }
+
+        function makeTrail(el, removeTime) {
+            var id = Util.GetDataId("trail");
+            var html = Component.Window.Trail(id, el.css("top"), el.css("left"), el.width(), el.height());
+            $("body").append(html);
+            Util.Sleep(function () {
+                $("#" + id).remove();
+            }, removeTime);
         }
 
         return protected;
@@ -811,7 +845,7 @@
         function protected() { }
 
         protected.Init = function () {
-
+            eventOnHoverAppIcon();
         };
 
         protected.LoadIcons = function () {
@@ -821,6 +855,24 @@
         function loadIcons() {
 
         }
+
+        function eventOnHoverAppIcon() {
+            //$(".work-area .app-icon").hover(function () {
+            //    $(this).animate({ "background": "rgba(255,255,255,0.1)" });
+            //});
+        }
+
+        return protected;
+    }());
+
+    var WorkArea = (function () {
+        function protected() { }
+
+        protected.Init = function (callback) {
+
+            if (callback)
+                callback();
+        };
 
         return protected;
     }());

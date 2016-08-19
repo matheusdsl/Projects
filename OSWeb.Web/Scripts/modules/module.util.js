@@ -194,7 +194,7 @@
     }
 
     public.OutClick = function (selector, callback) {
-        $(document).on("click", function (event) {
+        $(document).on("mousedown", function (event) {
             if (!$(event.target).closest(selector).length) {
                 if (callback) callback(event);
             }
