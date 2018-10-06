@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="osweb" Class="DatabaseDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=localhost;Initial Catalog=osweb;Persist Security Info=True;User ID=sa" SettingsObjectName="OSWeb.WCF.Entity.Properties.Settings" SettingsPropertyName="oswebConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="[database].[Column]" Member="Columns">
+    <Type Name="Column">
+      <Column Name="Id_Column" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Id_Table" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
+      <Column Name="Id_Data_Type" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(300)" CanBeNull="true" />
+      <Column Name="Length" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="Nullable" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="PrimaryKey" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Association Name="Column_Data" Member="Datas" ThisKey="Id_Column" OtherKey="Id_Column" Type="Data" />
+      <Association Name="Column_Relationship" Member="Relationships" ThisKey="Id_Column" OtherKey="Id_Column_Destiny" Type="Relationship" />
+      <Association Name="Column_Relationship1" Member="Relationships1" ThisKey="Id_Column" OtherKey="Id_Column_Source" Type="Relationship" />
+      <Association Name="DataType_Column" Member="DataType" ThisKey="Id_Data_Type" OtherKey="Id_Data_Type" Type="DataType" IsForeignKey="true" />
+      <Association Name="Table_Column" Member="Table" ThisKey="Id_Table" OtherKey="Id_Table" Type="Table" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="[database].Data" Member="Datas">
+    <Type Name="Data">
+      <Column Name="Id_Data" Type="System.String" DbType="NChar(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Id_Column" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Row" Type="System.Int64" DbType="BigInt NOT NULL" CanBeNull="false" />
+      <Column Name="Value" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Association Name="Column_Data" Member="Column" ThisKey="Id_Column" OtherKey="Id_Column" Type="Column" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="[database].[Database]" Member="Databases">
+    <Type Name="Database">
+      <Column Name="Id_Database" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(300) NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="VarChar(500)" CanBeNull="true" />
+      <Association Name="Database_Schema" Member="Schemas" ThisKey="Id_Database" OtherKey="Id_Database" Type="Schema" />
+    </Type>
+  </Table>
+  <Table Name="[database].DataHistory" Member="DataHistories">
+    <Type Name="DataHistory">
+      <Column Name="Id_Column" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
+      <Column Name="Row" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
+      <Column Name="Action" Type="System.String" DbType="VarChar(10)" CanBeNull="true" />
+      <Column Name="Value" Type="System.String" DbType="VarChar(MAX)" CanBeNull="true" />
+      <Column Name="Date" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="[database].DataType" Member="DataTypes">
+    <Type Name="DataType">
+      <Column Name="Id_Data_Type" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(300)" CanBeNull="true" />
+      <Association Name="DataType_Column" Member="Columns" ThisKey="Id_Data_Type" OtherKey="Id_Data_Type" Type="Column" />
+    </Type>
+  </Table>
+  <Table Name="[database].Relationship" Member="Relationships">
+    <Type Name="Relationship">
+      <Column Name="Id_Relationship" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Id_Column_Source" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
+      <Column Name="Id_Column_Destiny" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
+      <Column Name="Id_Relationship_Type" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
+      <Association Name="Column_Relationship" Member="Column" ThisKey="Id_Column_Destiny" OtherKey="Id_Column" Type="Column" IsForeignKey="true" />
+      <Association Name="Column_Relationship1" Member="Column1" ThisKey="Id_Column_Source" OtherKey="Id_Column" Type="Column" IsForeignKey="true" />
+      <Association Name="RelationshipType_Relationship" Member="RelationshipType" ThisKey="Id_Relationship_Type" OtherKey="Id_Relationship_Type" Type="RelationshipType" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="[database].RelationshipType" Member="RelationshipTypes">
+    <Type Name="RelationshipType">
+      <Column Name="Id_Relationship_Type" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(300)" CanBeNull="true" />
+      <Association Name="RelationshipType_Relationship" Member="Relationships" ThisKey="Id_Relationship_Type" OtherKey="Id_Relationship_Type" Type="Relationship" />
+    </Type>
+  </Table>
+  <Table Name="[database].[Schema]" Member="Schemas">
+    <Type Name="Schema">
+      <Column Name="Id_Schema" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Id_Database" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(300)" CanBeNull="true" />
+      <Association Name="Schema_Table" Member="Tables" ThisKey="Id_Schema" OtherKey="Id_Schema" Type="Table" />
+      <Association Name="Database_Schema" Member="Database" ThisKey="Id_Database" OtherKey="Id_Database" Type="Database" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="[database].[Table]" Member="Tables">
+    <Type Name="Table">
+      <Column Name="Id_Table" Type="System.Int64" DbType="BigInt NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Id_Schema" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(300)" CanBeNull="true" />
+      <Column Name="Description" Type="System.String" DbType="VarChar(500)" CanBeNull="true" />
+      <Association Name="Table_Column" Member="Columns" ThisKey="Id_Table" OtherKey="Id_Table" Type="Column" />
+      <Association Name="Schema_Table" Member="Schema" ThisKey="Id_Schema" OtherKey="Id_Schema" Type="Schema" IsForeignKey="true" />
+    </Type>
+  </Table>
+</Database>
